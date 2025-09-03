@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { ShoppingCart, Star } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -6,6 +9,7 @@ import { useLanguage } from "@/providers/language-provider";
 import { addItemToCart } from "@/utils/api/cart";
 import { toast } from "sonner";
 import Link from "next/link";
+import { getUserFromCookie } from "@/utils/store";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -41,6 +45,20 @@ export function ProductCard({
 }) {
   const { t } = useLanguage();
   const variant = product.variants[0];
+  const [user, setUser] = useState<any | null>(null); // State to store user data
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getUserFromCookie();
+        setUser(userData);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleAddToCart = async () => {
     try {
@@ -53,9 +71,9 @@ export function ProductCard({
 
   if (isListView) {
     return (
-      <Card className="overflow-hidden  ">
+      <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <div className="flex gap-6 ">
+          <div className="flex gap-6">
             <div className="flex-shrink-0">
               <img
                 src={variant.imageUrl || "/placeholder.svg"}
@@ -66,8 +84,18 @@ export function ProductCard({
             </div>
             <div className="flex flex-1 flex-col justify-between">
               <div>
-                <h3 className="text-base font-semibold text-card-foreground mb-2 ">
-                  <Link href={`/shop/${product.id}`}>{product.name}</Link>
+                <h3 className="text-base font-semibold text-card-foreground mb-2">
+                  {user ? (
+                    user.role === "CUSTOMER" ? (
+                      <Link href={`/shop/${product.id}`}>{product.name}</Link>
+                    ) : (
+                      <Link href={`/admin/products/${product.id}`}>
+                        {product.name}
+                      </Link>
+                    )
+                  ) : (
+                    product.name // Display only the product name if the user does not exist
+                  )}
                 </h3>
                 <p className="text-xs text-muted-foreground mb-3 text-balance">
                   {product.description}
@@ -80,10 +108,12 @@ export function ProductCard({
                     {variant.price} ETB
                   </span>
                 </div>
-                <Button className="gap-2 text-xs" onClick={handleAddToCart}>
-                  <ShoppingCart className="h-4 w-4" />
-                  {t("product.addToCart")}
-                </Button>
+                {(!user || user.role === "CUSTOMER") && (
+                  <Button className="gap-2 text-xs" onClick={handleAddToCart}>
+                    <ShoppingCart className="h-4 w-4" />
+                    {t("product.addToCart")}
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -97,15 +127,25 @@ export function ProductCard({
       <CardContent className="p-0 flex flex-col h-full">
         <div className="overflow-hidden">
           <img
-            src={variant.imageUrl || "/placeholder.svg"}
+            src={variant?.imageUrl || "/placeholder.svg"}
             alt={product.name}
             className="w-full object-cover aspect-video transition-transform duration-300 hover:scale-110"
             crossOrigin="anonymous"
           />
         </div>
         <div className="p-3 relative w-full flex-1 flex flex-col">
-          <h3 className="font-semibold text-base mb-2 text-balance">
-            <Link href={`/shop/${product.id}`}>{product.name}</Link>
+          <h3 className="text-base font-semibold text-card-foreground mb-2">
+            {user ? (
+              user.role === "CUSTOMER" ? (
+                <Link href={`/shop/${product.id}`}>{product.name}</Link>
+              ) : (
+                <Link href={`/admin/products/${product.id}`}>
+                  {product.name}
+                </Link>
+              )
+            ) : (
+              product.name // Display only the product name if the user does not exist
+            )}
           </h3>
           <p className="text-xs text-muted-foreground mb-3 text-balance line-clamp-2">
             {product.description}
@@ -113,18 +153,17 @@ export function ProductCard({
           <StarRating rating={product.rating} />
           <div className="flex items-center justify-between mt-4">
             <span className="text-lg font-bold text-primary">
-              {variant.price} ETB
+              {variant?.price} ETB
             </span>
           </div>
         </div>
         <div className="p-3 pt-0">
-          <Button
-            className="gap-2 text-xs w-full mt-auto"
-            onClick={handleAddToCart}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            {t("product.addToCart")}
-          </Button>
+          {(!user || user.role === "CUSTOMER") && (
+            <Button className="gap-2 text-xs" onClick={handleAddToCart}>
+              <ShoppingCart className="h-4 w-4" />
+              {t("product.addToCart")}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -25,3 +25,13 @@ export async function getOrderDetail(orderId: string) {
     throw error;
   }
 }
+export async function getAllOrders(params?: { page?: number; limit?: number }) {
+  try {
+    const response = await axiosInstance.get("/order", { params });
+    console.log("Fetched all orders:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    throw error;
+  }
+}

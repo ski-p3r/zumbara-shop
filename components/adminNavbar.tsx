@@ -22,10 +22,11 @@ import { useTheme } from "next-themes";
 import { useLanguage } from "@/providers/language-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getUserFromCookie } from "@/utils/store";
+import { getUserFromCookie, clearAllCookies } from "@/utils/store"; // Import clearAllCookies
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner"; // Import toast for notifications
 
-export default function Navbar() {
+export default function AdminNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [user, setUser] = useState<any>(null);
@@ -54,6 +55,18 @@ export default function Navbar() {
     };
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await clearAllCookies(); // Clear all cookies
+      setUser(null); // Reset user state
+      router.push("/"); // Redirect to the homepage
+      toast.success(t("nav.logoutSuccess")); // Show a success message
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast.error(t("nav.logoutError")); // Show an error message
+    }
+  };
+
   const languages = [
     { code: "en", name: t("lang.en") },
     { code: "ar", name: t("lang.ar") },
@@ -61,10 +74,10 @@ export default function Navbar() {
   ];
 
   const navItems = [
-    { key: "nav.home", href: "/" },
-    { key: "nav.shop", href: "/shop" },
-    { key: "nav.about", href: "/about" },
-    { key: "nav.contact", href: "/contact" },
+    { key: "nav.products", href: "/admin/products" },
+    { key: "nav.promotions", href: "/admin/promotions" },
+    { key: "nav.catagories", href: "/admin/categories" },
+    { key: "nav.orders", href: "/admin/orders" },
   ];
 
   return (
@@ -141,16 +154,6 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Cart */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative"
-              onClick={() => router.push("/cart")}
-            >
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
-
             {/* User Account */}
             {user ? (
               <DropdownMenu>
@@ -169,19 +172,10 @@ export default function Navbar() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align={isRTL ? "start" : "end"}>
-                  <DropdownMenuItem onClick={() => router.push("/my-orders")}>
-                    {t("nav.myOrders")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push("/profile")}>
+                  <DropdownMenuItem onClick={() => router.push("/admin/profile")}>
                     {t("nav.profile")}
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      // Implement logout logic here
-                      setUser(null);
-                      router.push("/");
-                    }}
-                  >
+                  <DropdownMenuItem onClick={handleLogout}>
                     {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>

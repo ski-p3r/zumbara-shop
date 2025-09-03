@@ -3,6 +3,10 @@
   "nav": {
     "home": "الرئيسية",
     "shop": "المتجر",
+    "orders": "الطلبات",
+    "catagories": "الفئات",
+    "promotions": "العروض",
+    "products": "المنتجات",
     "about": "حول",
     "contact": "اتصل بنا",
     "myOrders": "طلباتي",

@@ -1,0 +1,250 @@
+"use client";
+
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon, ArrowLeft, Save } from "lucide-react";
+import { format } from "date-fns";
+
+import { Toaster, toast } from "sonner";
+import { getPromotionById, updatePromotion } from "@/utils/api/promotion"; // Import functions
+
+export default function EditPromotionPage() {
+  const router = useRouter();
+  const { id } = useParams();
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    bannerUrl: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Fetch promotion data on mount
+  useEffect(() => {
+    const fetchPromotion = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        if (typeof id === "string") {
+          const data = await getPromotionById(id); // Use getPromotionById
+          console.log("Fetched promotion:", data);
+          setFormData({
+            title: data.title || "",
+            description: data.description || "",
+            startDate: new Date(data.startDate),
+            endDate: new Date(data.endDate),
+            bannerUrl: data.bannerUrl || "",
+          });
+        } else {
+          throw new Error("Invalid promotion ID.");
+        }
+      } catch (err: any) {
+        const errorMessage = err.response?.data?.message || "Failed to fetch promotion.";
+        setError(errorMessage);
+        toast.error(errorMessage);
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPromotion();
+  }, [id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    // Client-side validation
+    if (!formData.title || !formData.startDate || !formData.endDate) {
+      setError("Title, Start Date, and End Date are required.");
+      toast.error("Title, Start Date, and End Date are required.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      console.log("Sending PATCH request to update promotion", {
+        title: formData.title,
+        description: formData.description,
+        startDate: formData.startDate.toISOString(),
+        endDate: formData.endDate.toISOString(),
+        bannerUrl: formData.bannerUrl,
+      });
+
+      // Use updatePromotion function
+      await updatePromotion(id as string, {
+        title: formData.title,
+        description: formData.description || "",
+        startDate: formData.startDate.toISOString(),
+        endDate: formData.endDate.toISOString(),
+        bannerUrl: formData.bannerUrl || "",
+      });
+
+      toast.success("Promotion updated successfully!");
+      router.push("/admin/promotions");
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message || "Failed to update promotion. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
+      console.error("API error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center py-20">Loading promotion...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center py-20 text-red-500">{error}</p>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      <Toaster position="top-right" richColors />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center space-x-4 mb-8">
+          <Button variant="ghost" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-3xl font-serif font-bold text-foreground">Edit Promotion</h1>
+            <p className="text-muted-foreground">Update an existing promotional campaign</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Basic Information */}
+            <div className="lg:col-span-2">
+              <Card className="shadow-lg border-0">
+                <CardHeader>
+                  <CardTitle>Basic Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="e.g., Summer Sale 2024"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Describe this promotion..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bannerUrl">Banner Image URL</Label>
+                    <Input
+                      id="bannerUrl"
+                      value={formData.bannerUrl}
+                      onChange={(e) => setFormData({ ...formData, bannerUrl: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Date Range */}
+          <Card className="shadow-lg border-0">
+            <CardHeader>
+              <CardTitle>Validity Period</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Start Date *</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal bg-transparent"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.startDate ? format(formData.startDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.startDate}
+                        onSelect={(date) => date && setFormData({ ...formData, startDate: date })}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>End Date *</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal bg-transparent"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.endDate ? format(formData.endDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.endDate}
+                        onSelect={(date) => date && setFormData({ ...formData, endDate: date })}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+
+          {/* Submit Button */}
+          <div className="flex justify-end space-x-4">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              <Save className="mr-2 h-4 w-4" />
+              {isSubmitting ? "Updating..." : "Update Promotion"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

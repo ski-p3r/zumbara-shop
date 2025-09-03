@@ -25,6 +25,7 @@ export default function CartPage() {
       setLoading(true);
       try {
         const response = await getCart();
+        console.log("cart", response);
         setCart(response);
       } catch (error) {
         toast.error(t("cart.errorFetchCart"));

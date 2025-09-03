@@ -28,6 +28,10 @@ export default function LoginPage() {
       const response = await loginUser({ email, password });
       if (response.data.accessToken) {
         toast.success(t("login.success"));
+        if(response.data.user.role === 'MASTER_ADMIN') {
+          router.push("/admin/products");
+          return;
+        }
         router.push("/");
       } else {
         toast.error(response.data.details?.message || t("login.errorFailed"));

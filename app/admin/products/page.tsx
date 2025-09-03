@@ -10,6 +10,8 @@ import { getProducts } from "@/utils/api/product";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { getUserFromCookie } from "@/utils/store";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -25,8 +27,6 @@ export default function Home() {
 
   useEffect(() => {
     const fetchCarouselData = async () => {
-      const user=await getUserFromCookie()
-      console.log("user",user)
       const promotions = await getPromotions();
       setEvents(promotions);
     };
@@ -49,7 +49,6 @@ export default function Home() {
       }
     };
     const fetchProducts = async () => {
-      console.log("user",await getUserFromCookie())
       setLoading(true);
       try {
         const currentCategory = categoryStack[categoryStack.length - 1];
@@ -87,16 +86,21 @@ export default function Home() {
       setCategoryStack(categoryStack.slice(0, -1));
     }
   };
- 
+  // console.log("user",getUserFromCookie())
 
   return (
     <div className="w-full">
-      <Carousel events={events} />
+    <div className="flex justify-end">
+    <Button asChild>
+              <Link href="products/addProduct">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Product
+              </Link>
+            </Button>
+    </div>
+      
       <div className="mt-8">
-        <CategoryCarouselApi
-          apiCategories={apiCategories}
-          onCategoryClick={handleCategoryClick}
-        />
+        
         {categoryStack.length > 1 && (
           <button
             className="mt-4 rounded bg-primary/20 px-4 py-2"

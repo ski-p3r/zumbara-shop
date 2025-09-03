@@ -10,6 +10,12 @@ export interface GetProductsParams {
   minRating?: number;
   maxRating?: number;
 }
+export interface CreateProductPayload {
+  name: string;
+  description: string;
+  categoryId: string;
+  basePrice: number;
+}
 
 export async function getProducts(params?: GetProductsParams) {
   try {
@@ -19,6 +25,7 @@ export async function getProducts(params?: GetProductsParams) {
     throw error;
   }
 }
+ 
 
 export async function getProductById(productId: string) {
   try {
@@ -37,6 +44,15 @@ export async function canIReview(productId: string) {
     throw error;
   }
 }
+export async function createProduct(payload: CreateProductPayload) {
+  try {
+    const response = await axiosInstance.post("/products", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating product:", error);
+    throw error;
+  }
+}
 
 export interface PostReviewPayload {
   reviewText: string;
@@ -52,6 +68,22 @@ export async function postReview(
     return response.data;
   } catch (error) {
     console.error("Error posting review:", error);
+    throw error;
+  }
+}
+export interface EditProductPayload {
+  name?: string;
+  description?: string;
+  categoryId?: string;
+  basePrice?: number;
+}
+
+export async function editProduct(productId: string, payload: EditProductPayload) {
+  try {
+    const response = await axiosInstance.put(`/products/${productId}`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error editing product:", error);
     throw error;
   }
 }

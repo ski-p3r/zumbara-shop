@@ -125,12 +125,12 @@ export default function ProductDetailPage() {
         {/* Product Images & Variant Selector */}
         <div className="md:w-1/2 flex flex-col gap-4">
           <img
-            src={selectedVariant.imageUrl}
+            src={selectedVariant?.imageUrl}
             alt={product.name}
             className="w-full rounded-lg object-cover aspect-video border"
           />
           <Select
-            value={selectedVariant.id}
+            value={selectedVariant?.id}
             onValueChange={(id: string) => {
               const v = product.variants.find((v: any) => v.id === id);
               if (v) setSelectedVariant(v);
@@ -189,9 +189,9 @@ export default function ProductDetailPage() {
           </div>
           <div className="flex items-center gap-4 mt-2">
             <span className="text-xl font-bold text-primary">
-              {selectedVariant.price} ETB
+              {selectedVariant?.price} ETB
             </span>
-            {selectedVariant.isAvailable ? (
+            {selectedVariant?.isAvailable ? (
               <Badge
                 variant="outline"
                 className="text-green-600 border-green-600"
@@ -207,7 +207,7 @@ export default function ProductDetailPage() {
           <Button
             className="gap-2 w-full mt-4"
             onClick={handleAddToCart}
-            disabled={!selectedVariant.isAvailable}
+            disabled={!selectedVariant?.isAvailable}
           >
             <ShoppingCart className="h-4 w-4" />
             {t("product.addToCart")}

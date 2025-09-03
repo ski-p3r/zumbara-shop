@@ -3,6 +3,10 @@
   "nav": {
     "home": "Home",
     "shop": "Shop",
+    "orders": "Orders",
+    "catagories": "Categories",
+    "promotions": "Promotions",
+    "products": "Products",
     "about": "About",
     "contact": "Contact",
     "myOrders": "My Orders",
