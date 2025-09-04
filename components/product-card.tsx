@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, Trash2 } from "lucide-react"; // Import Trash2 icon
 import { Card, CardContent } from "./ui/card";
-import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"; // Import shadcn dialog components
 import { useLanguage } from "@/providers/language-provider";
 import { addItemToCart } from "@/utils/api/cart";
+import { deleteProduct } from "@/utils/api/product"; // Import deleteProduct function
 import { toast } from "sonner";
 import Link from "next/link";
 import { getUserFromCookie } from "@/utils/store";
@@ -46,6 +47,7 @@ export function ProductCard({
   const { t } = useLanguage();
   const variant = product.variants[0];
   const [user, setUser] = useState<any | null>(null); // State to store user data
+  const [isDeleting, setIsDeleting] = useState(false); // State for delete operation
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -66,6 +68,18 @@ export function ProductCard({
       toast.success(t("product.addToCartSuccess"));
     } catch (error) {
       toast.error(t("product.addToCartError"));
+    }
+  };
+
+  const handleDeleteProduct = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteProduct(product.id); // Call deleteProduct function
+      toast.success("Product deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete product");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -113,6 +127,40 @@ export function ProductCard({
                     <ShoppingCart className="h-4 w-4" />
                     {t("product.addToCart")}
                   </Button>
+                )}
+                {user?.role === "MASTER_ADMIN" && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="ml-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                      </DialogHeader>
+                      <p>Are you sure you want to delete this product?</p>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => {}}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={handleDeleteProduct}
+                          disabled={isDeleting}
+                        >
+                          {isDeleting ? "Deleting..." : "Delete"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </div>
             </div>
@@ -163,6 +211,34 @@ export function ProductCard({
               <ShoppingCart className="h-4 w-4" />
               {t("product.addToCart")}
             </Button>
+          )}
+          {user?.role === "MASTER_ADMIN" && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="destructive" className="gap-2 text-xs w-full">
+                  <Trash2 className="h-4 w-4" />
+                  Delete Product
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm Deletion</DialogTitle>
+                </DialogHeader>
+                <p>Are you sure you want to delete this product?</p>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => {}}>
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteProduct}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           )}
         </div>
       </CardContent>

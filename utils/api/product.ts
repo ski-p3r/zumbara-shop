@@ -14,7 +14,7 @@ export interface CreateProductPayload {
   name: string;
   description: string;
   categoryId: string;
-  basePrice: number;
+  basePrice?: number;
 }
 
 export async function getProducts(params?: GetProductsParams) {
@@ -40,6 +40,15 @@ export async function canIReview(productId: string) {
     const response = await axiosInstance.get(`/review/${productId}/can-review`);
     return response.data;
   } catch (error) {
+    throw error;
+  }
+}
+export async function deleteProduct(productId: string) {
+  try {
+    const response = await axiosInstance.delete(`/products/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting product:", error);
     throw error;
   }
 }
