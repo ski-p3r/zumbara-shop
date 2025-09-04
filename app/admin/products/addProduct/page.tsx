@@ -9,7 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft, Plus } from "lucide-react";
 
 import { createProduct } from "@/utils/api/product"; // Import the createProduct function
@@ -49,7 +55,7 @@ export default function AddProductPage() {
     };
     try {
       await createProduct(productData); // Use the createProduct function
-      router.push("/admin"); // Redirect to the products page
+      router.push("/admin/products"); // Redirect to the products page
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to create product");
     }
@@ -66,8 +72,12 @@ export default function AddProductPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Add New Product</h1>
-            <p className="text-muted-foreground">Create a new product for your catalog</p>
+            <h1 className="text-3xl font-serif font-bold text-foreground mb-2">
+              Add New Product
+            </h1>
+            <p className="text-muted-foreground">
+              Create a new product for your catalog
+            </p>
           </div>
         </div>
 
@@ -84,7 +94,9 @@ export default function AddProductPage() {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -94,7 +106,9 @@ export default function AddProductPage() {
                     id="description"
                     rows={3}
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -102,7 +116,9 @@ export default function AddProductPage() {
                     <Label htmlFor="category">Category *</Label>
                     <Select
                       value={formData.categoryId}
-                      onValueChange={(v) => setFormData({ ...formData, categoryId: v })}
+                      onValueChange={(v) =>
+                        setFormData({ ...formData, categoryId: v })
+                      }
                       required
                     >
                       <SelectTrigger>
@@ -123,7 +139,9 @@ export default function AddProductPage() {
                       id="price"
                       type="number"
                       value={formData.basePrice}
-                      onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, basePrice: e.target.value })
+                      }
                     />
                   </div>
                 </div>

@@ -7,9 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Upload, ImageIcon } from "lucide-react";
-import { getCategories, createCategory } from "@/utils/api/category"; // Import functions
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowLeft, ImageIcon } from "lucide-react";
+import { getCategories, createCategory } from "@/utils/api/category";
+import { uploadFile } from "@/utils/api/upload"; // Import uploadFile function
 
 export default function AddCategoryPage() {
   const router = useRouter();
@@ -19,6 +26,7 @@ export default function AddCategoryPage() {
     imageUrl: "",
     parentId: "",
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // Add state for file
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,8 +37,8 @@ export default function AddCategoryPage() {
       setLoading(true);
       setError("");
       try {
-        const response = await getCategories(); // Use getCategories from category.ts
-        setCategories(response.data); // Assuming response.data contains the categories
+        const response = await getCategories();
+        setCategories(response.data);
       } catch (err: any) {
         setError(err.message || "Failed to fetch categories.");
       } finally {
@@ -41,20 +49,44 @@ export default function AddCategoryPage() {
     fetchCategories();
   }, []);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      // Optionally, create a preview URL for display
+      setFormData({ ...formData, imageUrl: URL.createObjectURL(file) });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
 
+    let imageUrl = formData.imageUrl;
+    if (selectedFile) {
+      try {
+        const result = await uploadFile(selectedFile);
+        imageUrl = result?.url || result?.response?.url;
+        if (!imageUrl) {
+          throw new Error("Failed to upload image");
+        }
+      } catch (err: any) {
+        setError(err.message || "Failed to upload image.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const categoryData = {
       name: formData.name,
-      imageUrl: formData.imageUrl || "",
+      imageUrl: imageUrl || "",
       parentId: formData.parentId || undefined,
     };
 
     try {
-      await createCategory(categoryData); // Use createCategory from category.ts
-      router.push("/admin/categories"); // Redirect on success
+      await createCategory(categoryData);
+      router.push("/admin/categories");
     } catch (err: any) {
       setError(err.message || "Failed to create category.");
       console.error("Failed to create category:", err);
@@ -78,8 +110,12 @@ export default function AddCategoryPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Add New Category</h1>
-            <p className="text-muted-foreground">Create a new category for your products</p>
+            <h1 className="text-3xl font-serif font-bold text-foreground mb-2">
+              Add New Category
+            </h1>
+            <p className="text-muted-foreground">
+              Create a new category for your products
+            </p>
           </div>
         </div>
 
@@ -96,7 +132,9 @@ export default function AddCategoryPage() {
                     id="name"
                     placeholder="Enter category name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -105,7 +143,9 @@ export default function AddCategoryPage() {
                   <Label htmlFor="parentCategory">Parent Category</Label>
                   <Select
                     value={formData.parentId}
-                    onValueChange={(value) => setFormData({ ...formData, parentId: value })}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, parentId: value })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select parent category (optional)" />
@@ -121,23 +161,19 @@ export default function AddCategoryPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="imageUrl">Category Image</Label>
+                  <Label htmlFor="image">Category Image</Label>
                   <div className="flex items-center space-x-4">
                     <Input
-                      id="imageUrl"
-                      placeholder="Enter image URL or upload"
-                      value={formData.imageUrl}
-                      onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
                     />
-                    <Button type="button" variant="outline">
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload
-                    </Button>
                   </div>
                   {formData.imageUrl && (
                     <div className="mt-4">
                       <img
-                        src={formData.imageUrl || "/placeholder.svg"}
+                        src={formData.imageUrl}
                         alt="Category preview"
                         className="w-32 h-32 rounded-lg object-cover border"
                       />

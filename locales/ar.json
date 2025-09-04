@@ -3,12 +3,14 @@
   "nav": {
     "home": "الرئيسية",
     "shop": "المتجر",
+    "about": "حول",
+    "contact": "اتصل بنا",
     "orders": "الطلبات",
     "catagories": "الفئات",
     "promotions": "العروض",
     "products": "المنتجات",
-    "about": "حول",
-    "contact": "اتصل بنا",
+    "go_to_admin": "الذهاب إلى لوحة الإدارة",
+    "go_to_order_manager": "الذهاب إلى مدير الطلبات",
     "myOrders": "طلباتي",
     "profile": "الملف الشخصي",
     "logout": "تسجيل الخروج",
@@ -18,8 +20,8 @@
   "searchBtn": "بحث",
   "lang": {
     "en": "الإنجليزية",
-    "ar": "العربية",
-    "am": "الأمهرية"
+    "am": "الأمهرية",
+    "ar": "العربية"
   },
   "login": {
     "welcomeBack": "مرحبًا بعودتك",
@@ -293,30 +295,26 @@
     "viewInvoice": "عرض الفاتورة"
   },
   "profile": {
-    "title": "الملف الشخصي",
-    "edit": "تعديل",
-    "cancel": "إلغاء",
-    "firstName": "الاسم الأول",
-    "lastName": "اسم العائلة",
-    "email": "البريد الإلكتروني",
-    "phone": "الهاتف",
+    "changePhoto": "تغيير الصورة",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ...",
+    "showEmail": "إظهار البريد الإلكتروني",
+    "personalInfo": "معلومات شخصية",
     "address": "العنوان",
     "language": "اللغة",
-    "saveChanges": "حفظ التغييرات",
-    "saving": "جارٍ الحفظ...",
     "security": "الأمان",
     "changePassword": "تغيير كلمة المرور",
     "currentPassword": "كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
     "confirmPassword": "تأكيد كلمة المرور",
-    "updatePassword": "تحديث كلمة المرور",
-    "updating": "جارٍ التحديث...",
-    "changePhoto": "تغيير الصورة",
-    "uploading": "جارٍ الرفع...",
-    "saveAvatar": "حفظ الصورة",
-    "manageAccount": "إدارة إعدادات الحساب والتفضيلات الخاصة بك",
-    "emailCannotChange": "لا يمكن تغيير البريد الإلكتروني",
-    "password": "كلمة المرور",
-    "lastUpdated": "آخر تحديث منذ 30 يومًا"
+    "cancel": "إلغاء",
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+    "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح",
+    "passwordChangeFailed": "فشل تغيير كلمة المرور",
+    "profilePictureUpdated": "تم تحديث الصورة الشخصية",
+    "profilePictureUpdateFailed": "فشل تحديث الصورة الشخصية",
+    "logout": "تسجيل الخروج",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
+    "errorFetchUserData": "فشل في جلب بيانات المستخدم"
   }
 }

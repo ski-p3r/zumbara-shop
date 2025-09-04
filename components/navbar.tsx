@@ -22,12 +22,12 @@ import { useTheme } from "next-themes";
 import { useLanguage } from "@/providers/language-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getUserFromCookie } from "@/utils/store";
+import { clearAllCookies, getUserFromCookie } from "@/utils/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const [user, setUser] = useState<any>(null);
   const { language, setLanguage, t, isRTL } = useLanguage();
   const router = useRouter();
@@ -169,6 +169,20 @@ export default function Navbar() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align={isRTL ? "start" : "end"}>
+                  {user && user.role === "MASTER_ADMIN" && (
+                    <DropdownMenuItem
+                      onClick={() => router.push("/admin/products")}
+                    >
+                      {t("nav.go_to_admin")}
+                    </DropdownMenuItem>
+                  )}
+                  {user && user.role !== "CUSTOMER" && (
+                    <DropdownMenuItem
+                      onClick={() => router.push("/order-manager")}
+                    >
+                      {t("nav.go_to_order_manager")}
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={() => router.push("/my-orders")}>
                     {t("nav.myOrders")}
                   </DropdownMenuItem>
@@ -176,8 +190,9 @@ export default function Navbar() {
                     {t("nav.profile")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => {
-                      // Implement logout logic here
+                    onClick={async () => {
+                      await clearAllCookies();
+
                       setUser(null);
                       router.push("/");
                     }}

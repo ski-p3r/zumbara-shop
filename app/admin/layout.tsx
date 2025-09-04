@@ -1,4 +1,5 @@
 import AdminNavbar from "@/components/adminNavbar";
+import AuthGuard from "@/components/auth-guard";
 import Navbar from "@/components/navbar";
 
 export default function RootLayout({
@@ -8,6 +9,7 @@ export default function RootLayout({
 }) {
   return (
     <>
+      {/* <AuthGuard allowedRoles={["MASTER_ADMIN"]}> */}
       <section className="min-h-screen">
         <AdminNavbar />
         <main className="min-w-full font-sans flex flex-col items-center justify-center h-full p-8 pb-20 gap-16 sm:px-20">
@@ -21,6 +23,7 @@ export default function RootLayout({
           </p>
         </div>
       </footer>
+      {/* </AuthGuard> */}
     </>
   );
 }

@@ -25,7 +25,6 @@ export async function getProducts(params?: GetProductsParams) {
     throw error;
   }
 }
- 
 
 export async function getProductById(productId: string) {
   try {
@@ -78,12 +77,58 @@ export interface EditProductPayload {
   basePrice?: number;
 }
 
-export async function editProduct(productId: string, payload: EditProductPayload) {
+export async function editProduct(
+  productId: string,
+  payload: EditProductPayload
+) {
   try {
     const response = await axiosInstance.put(`/products/${productId}`, payload);
     return response.data;
   } catch (error) {
     console.error("Error editing product:", error);
+    throw error;
+  }
+}
+
+export async function getOutOfStockProducts(params?: {
+  search?: string;
+  categoryId?: string;
+  page?: number;
+  limit?: number;
+  minPrice?: number;
+  maxPrice?: number;
+}) {
+  try {
+    const response = await axiosInstance.get("/products/out-of-stock", {
+      params,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateProductStock(
+  variantId: string,
+  stockQuantity: number
+) {
+  try {
+    const response = await axiosInstance.put(`/product-variants/${variantId}`, {
+      stockQuantity,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function restockProduct(variantId: string, stockQuantity: number) {
+  try {
+    const response = await axiosInstance.put(`/product-variants/${variantId}`, {
+      stockQuantity,
+    });
+    return response.data;
+  } catch (error) {
     throw error;
   }
 }

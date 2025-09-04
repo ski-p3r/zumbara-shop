@@ -6,7 +6,7 @@ import axios, {
 import { clearAllCookies, getFromCookies, setInCookies } from "./store";
 
 export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8000/api/v1";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.0.22:8000/api/v1";
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
     const token = await getFromCookies("token");
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
-    } 
+    }
     return config;
   },
   (error) => Promise.reject(error)

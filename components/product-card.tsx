@@ -94,7 +94,7 @@ export function ProductCard({
                       </Link>
                     )
                   ) : (
-                    product.name // Display only the product name if the user does not exist
+                    <Link href={`/shop/${product.id}`}>{product.name}</Link>
                   )}
                 </h3>
                 <p className="text-xs text-muted-foreground mb-3 text-balance">
@@ -144,7 +144,7 @@ export function ProductCard({
                 </Link>
               )
             ) : (
-              product.name // Display only the product name if the user does not exist
+              <Link href={`/shop/${product.id}`}>{product.name}</Link>
             )}
           </h3>
           <p className="text-xs text-muted-foreground mb-3 text-balance line-clamp-2">
@@ -157,9 +157,9 @@ export function ProductCard({
             </span>
           </div>
         </div>
-        <div className="p-3 pt-0">
+        <div className="p-3 pt-0 w-full">
           {(!user || user.role === "CUSTOMER") && (
-            <Button className="gap-2 text-xs" onClick={handleAddToCart}>
+            <Button className="gap-2 text-xs w-full" onClick={handleAddToCart}>
               <ShoppingCart className="h-4 w-4" />
               {t("product.addToCart")}
             </Button>

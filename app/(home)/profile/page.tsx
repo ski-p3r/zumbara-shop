@@ -12,6 +12,7 @@ import { uploadFile } from "@/utils/api/upload";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Camera, Upload, Save, Lock } from "lucide-react";
+import { clearAllCookies } from "@/utils/store";
 
 // Utility function to capitalize the first letter of a string
 const capitalize = (str: string) => {
@@ -319,8 +320,8 @@ export default function ProfilePage() {
             )}
             <Button
               className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-full"
-              onClick={() => {
-                localStorage.clear();
+              onClick={async () => {
+                await clearAllCookies();
                 router.push("/login");
                 toast.success(t("profile.logoutSuccess"));
               }}

@@ -6,7 +6,6 @@ export interface AddVariantPayload {
   price: number;
   stockQuantity: number;
   isAvailable: boolean;
-  procurementTime: string;
   imageUrl: string;
 }
 

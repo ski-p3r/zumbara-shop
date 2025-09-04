@@ -3,13 +3,15 @@
   "nav": {
     "home": "መነሻ",
     "shop": "ሱቅ",
+    "about": "ስለእኛ",
+    "contact": "አግኙን",
     "orders": "ትዕዛዞች",
     "catagories": "ምድቦች",
     "promotions": "ማስታወቂያዎች",
     "products": "ምርቶች",
-    "about": "ስለእኛ",
-    "contact": "አግኙን",
-    "myOrders": "ትዕዛዞቼ",
+    "go_to_admin": "ወደ አስተዳዳሪ ይሂዱ",
+    "go_to_order_manager": "ወደ ትዕዛዝ አስተዳዳሪ ይሂዱ",
+    "myOrders": "የኔ ትዕዛዞች",
     "profile": "መገለጫ",
     "logout": "ውጣ",
     "login": "ግባ"
@@ -18,8 +20,8 @@
   "searchBtn": "ፈልግ",
   "lang": {
     "en": "እንግሊዝኛ",
-    "ar": "ዓረብኛ",
-    "am": "አማርኛ"
+    "am": "አማርኛ",
+    "ar": "ዓረብኛ"
   },
   "login": {
     "welcomeBack": "እንኳን ደህና መጡ",
@@ -284,30 +286,26 @@
     "viewInvoice": "ኢንቮይስ ይመልከቱ"
   },
   "profile": {
-    "title": "መገለጫ",
-    "edit": "አርትዕ",
-    "cancel": "ሰርዝ",
-    "firstName": "የመጀመሪያ ስም",
-    "lastName": "የአያት ስም",
-    "email": "ኢሜይል",
-    "phone": "ስልክ",
+    "changePhoto": "ፎቶ ቀይር",
+    "save": "አስቀምጥ",
+    "saving": "በመቀመጥ ላይ...",
+    "showEmail": "ኢሜይል አሳይ",
+    "personalInfo": "የግል መረጃ",
     "address": "አድራሻ",
     "language": "ቋንቋ",
-    "saveChanges": "ለውጦችን አስቀምጥ",
-    "saving": "በማስቀመጥ ላይ...",
     "security": "ደህንነት",
     "changePassword": "የይለፍ ቃል ቀይር",
-    "currentPassword": "የአሁኑ ይለፍ ቃል",
-    "newPassword": "አዲስ ይለፍ ቃል",
-    "confirmPassword": "ይለፍ ቃልን አረጋግጥ",
-    "updatePassword": "ይለፍ ቃል አዘምን",
-    "updating": "በማዘመን ላይ...",
-    "changePhoto": "ፎቶ ቀይር",
-    "uploading": "በመጫን ላይ...",
-    "saveAvatar": "ፎቶ አስቀምጥ",
-    "manageAccount": "የመገለጫ ማስተካከያ እና ምርጫዎችን ያቀናብሩ",
-    "emailCannotChange": "ኢሜይል ማስተካከል አይቻልም",
-    "password": "የይለፍ ቃል",
-    "lastUpdated": "መጨረሻ የታደሰው 30 ቀናት በፊት"
+    "currentPassword": "የአሁኑ የይለፍ ቃል",
+    "newPassword": "አዲስ የይለፍ ቃል",
+    "confirmPassword": "የይለፍ ቃል አረጋግጥ",
+    "cancel": "ሰርዝ",
+    "passwordsDoNotMatch": "የይለፍ ቃሎች አይዛመዱም",
+    "passwordChangedSuccess": "የይለፍ ቃል ተቀይሯል",
+    "passwordChangeFailed": "የይለፍ ቃል መቀየር አልተሳካም",
+    "profilePictureUpdated": "ፎቶ ተቀይሯል",
+    "profilePictureUpdateFailed": "ፎቶ መቀየር አልተሳካም",
+    "logout": "ውጣ",
+    "logoutSuccess": "በተሳካ ሁኔታ ወጥተህ ነህ",
+    "errorFetchUserData": "የተጠቃሚ መረጃ ማግኘት አልተሳካም"
   }
 }

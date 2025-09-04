@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation"; // Import useRouter for navigation
+import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,17 +13,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/providers/language-provider";
-import { ShoppingCart, Plus, Edit } from "lucide-react"; // Import Edit icon
+import { ShoppingCart, Plus, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { addItemToCart } from "@/utils/api/cart";
 import { getProductById } from "@/utils/api/product";
-
-import { addVariant } from "@/utils/api/variant"; // Updated import path for addVariant
+import { addVariant } from "@/utils/api/variant";
 import { getUserFromCookie } from "@/utils/store";
+import { uploadFile } from "@/utils/api/upload"; // Add import for file upload
 
 export default function ProductDetailPage() {
   const { t } = useLanguage();
-  const router = useRouter(); // Initialize useRouter for navigation
+  const router = useRouter();
   const params = useParams();
   const productId: string = Array.isArray(params.id)
     ? params.id?.[0] ?? ""
@@ -31,15 +31,15 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<any | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isMasterAdmin, setIsMasterAdmin] = useState(false); // State to check if the user is MASTER_ADMIN
+  const [isMasterAdmin, setIsMasterAdmin] = useState(false);
   const [variantData, setVariantData] = useState({
     variantName: "",
     price: 0,
     stockQuantity: 0,
     isAvailable: true,
-    procurementTime: "",
     imageUrl: "",
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // Add state for file
 
   useEffect(() => {
     async function fetchProduct() {
@@ -49,7 +49,6 @@ export default function ProductDetailPage() {
         setProduct(res.data);
         setSelectedVariant(res.data.variants[0]);
 
-        // Check if the user is MASTER_ADMIN
         const user = await getUserFromCookie();
         setIsMasterAdmin(user?.role === "MASTER_ADMIN");
       } catch (err) {
@@ -74,16 +73,37 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
   const handleAddVariant = async () => {
-    if (!variantData.variantName || variantData.price <= 0 || variantData.stockQuantity <= 0) {
+    if (
+      !variantData.variantName ||
+      variantData.price <= 0 ||
+      variantData.stockQuantity <= 0
+    ) {
       toast.error("Please fill in all required fields for the variant.");
       return;
     }
 
     try {
+      let imageUrl = variantData.imageUrl;
+      if (selectedFile) {
+        const result = await uploadFile(selectedFile);
+        imageUrl = result?.url || result?.response?.url;
+        if (!imageUrl) {
+          throw new Error("Failed to upload image");
+        }
+      }
+
       await addVariant({
         productId,
         ...variantData,
+        imageUrl, // Use the uploaded image URL
       });
       toast.success("Variant added successfully!");
       setVariantData({
@@ -91,11 +111,11 @@ export default function ProductDetailPage() {
         price: 0,
         stockQuantity: 0,
         isAvailable: true,
-        procurementTime: "",
         imageUrl: "",
       });
+      setSelectedFile(null); // Reset file input
 
-      // Refresh product data to include the new variant
+      // Refresh product data
       const res = await getProductById(productId);
       setProduct(res.data);
     } catch (error) {
@@ -180,7 +200,10 @@ export default function ProductDetailPage() {
                 placeholder="Enter variant name (e.g., Size M, Color Red)"
                 value={variantData.variantName}
                 onChange={(e) =>
-                  setVariantData({ ...variantData, variantName: e.target.value })
+                  setVariantData({
+                    ...variantData,
+                    variantName: e.target.value,
+                  })
                 }
                 className="border rounded-lg p-2"
               />
@@ -192,7 +215,10 @@ export default function ProductDetailPage() {
                 placeholder="Enter price (e.g., 100)"
                 value={variantData.price}
                 onChange={(e) =>
-                  setVariantData({ ...variantData, price: Number(e.target.value) })
+                  setVariantData({
+                    ...variantData,
+                    price: Number(e.target.value),
+                  })
                 }
                 className="border rounded-lg p-2"
               />
@@ -212,37 +238,18 @@ export default function ProductDetailPage() {
                 className="border rounded-lg p-2"
               />
               <label className="text-sm font-medium text-muted-foreground">
-                Procurement Time
+                Image
               </label>
               <input
-                type="text"
-                placeholder="Enter procurement time (e.g., 2 days)"
-                value={variantData.procurementTime}
-                onChange={(e) =>
-                  setVariantData({
-                    ...variantData,
-                    procurementTime: e.target.value,
-                  })
-                }
-                className="border rounded-lg p-2"
-              />
-              <label className="text-sm font-medium text-muted-foreground">
-                Image URL
-              </label>
-              <input
-                type="text"
-                placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
-                value={variantData.imageUrl}
-                onChange={(e) =>
-                  setVariantData({ ...variantData, imageUrl: e.target.value })
-                }
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
                 className="border rounded-lg p-2"
               />
               <Button className="w-full" onClick={handleAddVariant}>
                 <Plus className="h-4 w-4" />
                 Add Variant
               </Button>
-              {/* Edit Product Button */}
               <Button
                 className="w-full mt-4"
                 variant="outline"
