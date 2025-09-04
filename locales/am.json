@@ -307,5 +307,18 @@
     "logout": "ውጣ",
     "logoutSuccess": "በተሳካ ሁኔታ ወጥተህ ነህ",
     "errorFetchUserData": "የተጠቃሚ መረጃ ማግኘት አልተሳካም"
+  },
+  "contact": {
+    "title": "አግኙን",
+    "subtitle": "ከእኛ ጋር ለመገናኘት ይፈልጋሉ? ቅጽ ይሙሉ እኛም በቅርቡ እንመልስልዎታለን።",
+    "name": "ስም",
+    "email": "ኢሜይል",
+    "message": "መልእክት",
+    "send": "መልእክት ላክ",
+    "sending": "በመላክ ላይ...",
+    "success": "መልእክትዎ ተልኳል!",
+    "namePlaceholder": "ስምዎን ያስገቡ",
+    "emailPlaceholder": "ኢሜይልዎን ያስገቡ",
+    "messagePlaceholder": "መልእክትዎን እዚህ ያስገቡ..."
   }
 }

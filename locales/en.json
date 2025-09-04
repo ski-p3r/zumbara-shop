@@ -307,5 +307,25 @@
     "logout": "Logout",
     "logoutSuccess": "Logged out successfully",
     "errorFetchUserData": "Failed to fetch user data"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We'd love to hear from you. Fill out the form below and we'll get back to you soon.",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Your message has been sent!",
+    "namePlaceholder": "Enter your name",
+    "emailPlaceholder": "Enter your email",
+    "messagePlaceholder": "Type your message here..."
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Learn more about Zumbara and our mission.",
+    "mission": "Our mission is to make shopping easier, faster, and more enjoyable for everyone in Ethiopia.",
+    "values": "We value customer satisfaction, innovation, and community support.",
+    "team": "Our team is passionate about delivering the best online shopping experience."
   }
 }

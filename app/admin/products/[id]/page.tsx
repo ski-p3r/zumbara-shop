@@ -12,17 +12,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLanguage } from "@/providers/language-provider";
 import { ShoppingCart, Plus, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { addItemToCart } from "@/utils/api/cart";
 import { getProductById } from "@/utils/api/product";
-import { addVariant } from "@/utils/api/variant";
+import {
+  addVariant,
+  updateVariants,
+  deleteProductVariant,
+} from "@/utils/api/variant";
 import { getUserFromCookie } from "@/utils/store";
 import { uploadFile } from "@/utils/api/upload"; // Add import for file upload
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 export default function ProductDetailPage() {
-  const { t } = useLanguage();
   const router = useRouter();
   const params = useParams();
   const productId: string = Array.isArray(params.id)
@@ -39,7 +49,17 @@ export default function ProductDetailPage() {
     isAvailable: true,
     imageUrl: "",
   });
-  const [selectedFile, setSelectedFile] = useState<File | null>(null); // Add state for file
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingVariant, setEditingVariant] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({
+    variantName: "",
+    price: 0,
+    stockQuantity: 0,
+    isAvailable: true,
+    imageUrl: "",
+  });
+  const [editFile, setEditFile] = useState<File | null>(null);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -52,24 +72,24 @@ export default function ProductDetailPage() {
         const user = await getUserFromCookie();
         setIsMasterAdmin(user?.role === "MASTER_ADMIN");
       } catch (err) {
-        toast.error(t("productDetail.errorFetch"));
+        toast.error("Failed to fetch product data.");
       } finally {
         setLoading(false);
       }
     }
     fetchProduct();
-  }, [productId, t]);
+  }, [productId]);
 
   const handleAddToCart = async () => {
     if (!selectedVariant?.isAvailable) {
-      toast.error(t("productDetail.errorVariantUnavailable"));
+      toast.error("This variant is unavailable.");
       return;
     }
     try {
       await addItemToCart(product.id, selectedVariant.id, 1);
-      toast.success(t("productDetail.successAddToCart"));
+      toast.success("Added to cart!");
     } catch (error) {
-      toast.error(t("productDetail.errorAddToCart"));
+      toast.error("Failed to add to cart.");
     }
   };
 
@@ -123,12 +143,62 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleEditClick = (variant: any) => {
+    setEditingVariant(variant);
+    setEditForm({
+      variantName: variant.variantName,
+      price: variant.price,
+      stockQuantity: variant.stockQuantity,
+      isAvailable: variant.isAvailable,
+      imageUrl: variant.imageUrl,
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setEditFile(file);
+  };
+
+  const handleUpdateVariant = async () => {
+    if (!editingVariant) return;
+    try {
+      let imageUrl = editForm.imageUrl;
+      if (editFile) {
+        const result = await uploadFile(editFile);
+        imageUrl = result?.url || result?.response?.url;
+        if (!imageUrl) throw new Error("Failed to upload image");
+      }
+      await updateVariants(editingVariant.id, { ...editForm, imageUrl });
+      toast.success("Variant updated successfully!");
+      setEditDialogOpen(false);
+      setEditFile(null);
+      // Refresh product data
+      const res = await getProductById(productId);
+      setProduct(res.data);
+    } catch (error) {
+      toast.error("Failed to update variant.");
+    }
+  };
+
+  const handleDeleteVariant = async () => {
+    if (!editingVariant) return;
+    try {
+      await deleteProductVariant(editingVariant.id);
+      toast.success("Variant deleted successfully!");
+      setEditDialogOpen(false);
+      // Refresh product data
+      const res = await getProductById(productId);
+      setProduct(res.data);
+    } catch (error) {
+      toast.error("Failed to delete variant.");
+    }
+  };
+
   if (loading || !product) {
     return (
       <div className="flex justify-center items-center h-96">
-        <span className="text-lg font-semibold">
-          {t("productDetail.loading")}
-        </span>
+        <span className="text-lg font-semibold">Loading product...</span>
       </div>
     );
   }
@@ -151,7 +221,7 @@ export default function ProductDetailPage() {
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={t("product.selectVariant")} />
+              <SelectValue placeholder="Select Variant" />
             </SelectTrigger>
             <SelectContent>
               {product.variants.map((variant: any) => (
@@ -161,7 +231,7 @@ export default function ProductDetailPage() {
                   disabled={!variant.isAvailable}
                 >
                   {variant.variantName} - {variant.price} ETB{" "}
-                  {!variant.isAvailable && `(${t("product.outOfStock")})`}
+                  {!variant.isAvailable && "(Out of Stock)"}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -180,11 +250,11 @@ export default function ProductDetailPage() {
                 variant="outline"
                 className="text-green-600 border-green-600"
               >
-                {t("product.inStock")}
+                In Stock
               </Badge>
             ) : (
               <Badge variant="outline" className="text-red-600 border-red-600">
-                {t("product.outOfStock")}
+                Out of Stock
               </Badge>
             )}
           </div>
@@ -258,6 +328,100 @@ export default function ProductDetailPage() {
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Product
               </Button>
+              <h2 className="text-lg font-bold mt-8">Variants</h2>
+              <div className="flex flex-col gap-2">
+                {product.variants.map((variant: any) => (
+                  <div
+                    key={variant.id}
+                    className="flex items-center gap-4 border rounded-lg p-2"
+                  >
+                    <span className="font-semibold">{variant.variantName}</span>
+                    <span>{variant.price} ETB</span>
+                    <span>{variant.stockQuantity} Stock</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEditClick(variant)}
+                    >
+                      <Edit className="h-4 w-4 mr-1" /> Edit
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Variant</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex flex-col gap-3">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Variant Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.variantName}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          variantName: e.target.value,
+                        }))
+                      }
+                      className="border rounded-lg p-2"
+                    />
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Price (ETB)
+                    </label>
+                    <input
+                      type="number"
+                      value={editForm.price}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          price: Number(e.target.value),
+                        }))
+                      }
+                      className="border rounded-lg p-2"
+                    />
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Stock Quantity
+                    </label>
+                    <input
+                      type="number"
+                      value={editForm.stockQuantity}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          stockQuantity: Number(e.target.value),
+                        }))
+                      }
+                      className="border rounded-lg p-2"
+                    />
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Image
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleEditFileChange}
+                      className="border rounded-lg p-2"
+                    />
+                  </div>
+                  <DialogFooter className="flex gap-2 pt-4">
+                    <Button
+                      onClick={handleUpdateVariant}
+                      className="bg-primary "
+                    >
+                      Save
+                    </Button>
+                    <Button variant="destructive" onClick={handleDeleteVariant}>
+                      Delete
+                    </Button>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           ) : (
             <Button
@@ -266,7 +430,7 @@ export default function ProductDetailPage() {
               disabled={!selectedVariant?.isAvailable}
             >
               <ShoppingCart className="h-4 w-4" />
-              {t("product.addToCart")}
+              Add to Cart
             </Button>
           )}
         </div>
