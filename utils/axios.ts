@@ -6,7 +6,7 @@ import axios, {
 import { clearAllCookies, getFromCookies, setInCookies } from "./store";
 
 export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://51.20.1.123:8000/api/v1";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "https://server.zumbarashop.com/api/v1";
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

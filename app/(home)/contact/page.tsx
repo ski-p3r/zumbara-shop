@@ -47,7 +47,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto py-16 px-4">
+    <div className="min-h-screen max-w-xl mx-auto py-16 px-4">
       <Card className="rounded-3xl shadow-2xl border-0 bg-gradient-to-br from-primary/10 to-background/80 dark:from-primary/20 dark:to-zinc-900/90">
         <CardContent className="p-10 flex flex-col items-center">
           <div className="flex flex-col items-center mb-6">
