@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,9 @@ import { getOutOfStockProducts, restockProduct } from "@/utils/api/product";
 import { toast } from "sonner";
 import { getCategories } from "@/utils/api/category";
 
+// -----------------------------
+// Types
+// -----------------------------
 interface Product {
   id: string;
   productId: string;
@@ -58,7 +61,23 @@ interface ApiResponse {
   nextLink: string | null;
 }
 
-export default function OutOfStockManagerPage() {
+// -----------------------------
+// Main Page Wrapper (with Suspense)
+// -----------------------------
+export default function Page() {
+  return (
+    <Suspense
+      fallback={<div className="p-6">Loading out of stock manager...</div>}
+    >
+      <OutOfStockManagerPage />
+    </Suspense>
+  );
+}
+
+// -----------------------------
+// Client Component
+// -----------------------------
+function OutOfStockManagerPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -86,6 +105,9 @@ export default function OutOfStockManagerPage() {
   const [maxPriceInput, setMaxPriceInput] = useState(maxPrice);
   const [categories, setCategories] = useState<any[]>([]);
 
+  // -----------------------------
+  // Fetch products
+  // -----------------------------
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -115,6 +137,9 @@ export default function OutOfStockManagerPage() {
     fetchProducts();
   }, [searchParams]);
 
+  // -----------------------------
+  // URL updates
+  // -----------------------------
   const updateURL = (newParams: Record<string, string>) => {
     const params = new URLSearchParams(searchParams);
 
@@ -143,6 +168,9 @@ export default function OutOfStockManagerPage() {
     });
   };
 
+  // -----------------------------
+  // Restock
+  // -----------------------------
   const handleRestock = async () => {
     if (!selectedProduct || !restockQuantity) return;
 
@@ -166,6 +194,9 @@ export default function OutOfStockManagerPage() {
 
   const totalPages = Math.ceil(total / limit);
 
+  // -----------------------------
+  // UI
+  // -----------------------------
   return (
     <div className="container mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -184,7 +215,7 @@ export default function OutOfStockManagerPage() {
       </div>
 
       {/* Filters */}
-      <Card className="">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="w-5 h-5" />
@@ -218,7 +249,6 @@ export default function OutOfStockManagerPage() {
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* <SelectItem value="">All categories</SelectItem> */}
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -279,8 +309,8 @@ export default function OutOfStockManagerPage() {
           ))}
         </div>
       ) : products.length === 0 ? (
-        <Card className="">
-          <CardContent className="flex flex-col items-center justify-center  ">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center">
             <Package className="w-12 h-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
               No out-of-stock products found
