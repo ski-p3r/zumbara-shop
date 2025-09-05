@@ -22,9 +22,9 @@ import { useTheme } from "next-themes";
 import { useLanguage } from "@/providers/language-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getUserFromCookie, clearAllCookies } from "@/utils/store"; // Import clearAllCookies
+import { getUserFromCookie, clearAllCookies } from "@/utils/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "sonner"; // Import toast for notifications
+import { toast } from "sonner";
 
 export default function AdminNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,29 +41,29 @@ export default function AdminNavbar() {
       console.log("User data fetched:", response);
     } catch (error) {
       console.error("Error fetching user:", error);
-      setUser(null); // Reset user on error
+      setUser(null);
     }
   };
 
   // Expose refreshUser globally and fetch user on mount
   useEffect(() => {
-    (window as any).refreshUser = refreshUser; // Expose function globally
-    refreshUser(); // Initial fetch on component mount
+    (window as any).refreshUser = refreshUser;
+    refreshUser();
 
     return () => {
-      delete (window as any).refreshUser; // Cleanup on unmount
+      delete (window as any).refreshUser;
     };
   }, []);
 
   const handleLogout = async () => {
     try {
-      await clearAllCookies(); // Clear all cookies
-      setUser(null); // Reset user state
-      router.push("/"); // Redirect to the homepage
-      toast.success(t("nav.logoutSuccess")); // Show a success message
+      await clearAllCookies();
+      setUser(null);
+      router.push("/");
+      toast.success(t("nav.logoutSuccess"));
     } catch (error) {
       console.error("Error during logout:", error);
-      toast.error(t("nav.logoutError")); // Show an error message
+      toast.error(t("nav.logoutError"));
     }
   };
 
@@ -76,30 +76,30 @@ export default function AdminNavbar() {
   const navItems = [
     { key: "nav.products", href: "/admin/products" },
     { key: "nav.promotions", href: "/admin/promotions" },
-    { key: "nav.catagories", href: "/admin/categories" },
+    { key: "nav.categories", href: "/admin/categories" },
     { key: "nav.orders", href: "/admin/orders" },
   ];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="py-2">
-        <div className="flex items-center justify-between px-8 gap-16 sm:px-20">
+      <div className="py-3">
+        <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 gap-4 sm:gap-8 md:gap-12 lg:gap-16">
           {/* Logo */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             <Link href="/">
               <img
                 src="/images/icon.png"
                 alt="Zumbara Logo"
-                className="h-8 w-8"
+                className="h-8 w-8 sm:h-10 sm:w-10"
               />
             </Link>
-            <div className="text-2xl font-bold text-primary">
+            <div className="text-xl sm:text-2xl font-bold text-primary">
               <Link href="/">Zumbara</Link>
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.key}
@@ -112,15 +112,15 @@ export default function AdminNavbar() {
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
-                  <Globe className="h-4 w-4" />
+                  <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align={isRTL ? "start" : "end"}>
+              <DropdownMenuContent align={isRTL ? "start" : "end"} className="min-w-[120px]">
                 {languages.map((lang) => (
                   <DropdownMenuItem
                     key={lang.code}
@@ -137,11 +137,11 @@ export default function AdminNavbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
-                  <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  <Sun className="h-4 w-4 sm:h-5 sm:w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                  <Moon className="absolute h-4 w-4 sm:h-5 sm:w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align={isRTL ? "start" : "end"}>
+              <DropdownMenuContent align={isRTL ? "start" : "end"} className="min-w-[120px]">
                 <DropdownMenuItem onClick={() => setTheme("light")}>
                   Light
                 </DropdownMenuItem>
@@ -171,7 +171,7 @@ export default function AdminNavbar() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align={isRTL ? "start" : "end"}>
+                <DropdownMenuContent align={isRTL ? "start" : "end"} className="min-w-[120px]">
                   <DropdownMenuItem onClick={() => router.push("/admin/profile")}>
                     {t("nav.profile")}
                   </DropdownMenuItem>
@@ -184,10 +184,11 @@ export default function AdminNavbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => router.push("auth/login")}
+                onClick={() => router.push("/auth/login")}
+                className="flex items-center"
               >
-                <User className="h-4 w-4" />
-                <span className="ml-2">{t("nav.login")}</span>
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="ml-2 hidden sm:inline">{t("nav.login")}</span>
               </Button>
             )}
 
@@ -195,36 +196,47 @@ export default function AdminNavbar() {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden"
+              className="lg:hidden relative w-10 h-10 flex items-center justify-center"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? (
-                <X className="h-4 w-4" />
-              ) : (
-                <Menu className="h-4 w-4" />
-              )}
+              <span className="sr-only">Toggle menu</span>
+              <div className="relative w-6 h-6">
+                <Menu
+                  className={`h-6 w-6 absolute transition-all duration-300 ease-in-out ${
+                    isMenuOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"
+                  }`}
+                />
+                <X
+                  className={`h-6 w-6 absolute transition-all duration-300 ease-in-out ${
+                    isMenuOpen ? "opacity-100 rotate-0" : "opacity-0 -rotate-90"
+                  }`}
+                />
+              </div>
             </Button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden border-t py-4">
-            <div className="flex flex-col space-y-4">
-              {/* Mobile Navigation Links */}
+        <div
+          className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="border-t py-4 px-4 sm:px-6">
+            <div className="flex flex-col space-y-3">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.key}
                   href={item.href}
                   className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t(item.key)}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );
