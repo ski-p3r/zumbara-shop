@@ -185,7 +185,7 @@ export function ProductCard({
             crossOrigin="anonymous"
           />
         </div>
-        <div className="p-1 md:p-3 relative w-full flex-1 flex flex-col">
+        <div className="p-3 relative w-full flex-1 flex flex-col">
           <h3 className="text-sm md:text-base font-semibold text-card-foreground mb-2 leading-3">
             {user ? (
               user.role === "CUSTOMER" ? (

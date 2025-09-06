@@ -116,7 +116,7 @@ export default function Home() {
             <span className="text-lg text-gray-500">Loading...</span>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
             {Array.isArray(products) && products.length > 0 ? (
               products.map((product) => (
                 <ProductCard
