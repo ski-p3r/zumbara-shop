@@ -33,6 +33,7 @@
     "showPassword": "إظهار كلمة المرور",
     "hidePassword": "إخفاء كلمة المرور",
     "loginButton": "تسجيل الدخول",
+    "loading":"جاري تحميل السلة...",
     "dontHaveAccount": "ليس لديك حساب؟ ",
     "registerLink": "سجّل الآن",
     "success": "تم تسجيل الدخول بنجاح!",
@@ -55,6 +56,7 @@
     "phonePlaceholder": "+2519xxxxxxxx",
     "address": "العنوان",
     "addressPlaceholder": "أديس أبابا، إثيوبيا",
+    "loading": "جاري التسجيل...",
     "registerButton": "سجّل الآن",
     "alreadyHaveAccount": "لديك حساب بالفعل؟ ",
     "loginLink": "تسجيل الدخول",
@@ -92,6 +94,7 @@
   },
   "home": {
     "errorFetchCategories": "فشل جلب التصنيفات. يرجى المحاولة مرة أخرى.",
+    "loadingProducts": "جارٍ تحميل المنتجات...",
     "backToParentCategory": "العودة إلى التصنيف الرئيسي",
     "featureCardTitle": "تسوق بذكاء، عش أفضل",
     "featureCardDesc": "استمتع بمجموعات مختارة، عروض حصرية، وتجربة تسوق سلسة.",
@@ -232,6 +235,9 @@
   "myOrders": {
     "title": "طلباتي",
     "loading": "جارٍ تحميل طلباتك...",
+    "invoice": "الفاتورة",
+    "date":"التاريخ",
+    "status":"الحالة",
     "errorFetch": "فشل في جلب الطلبات. يرجى المحاولة مرة أخرى.",
     "noOrders": "ليس لديك أي طلبات حتى الآن.",
     "previous": "السابق",
@@ -315,6 +321,7 @@
     "profilePictureUpdateFailed": "فشل تحديث الصورة الشخصية",
     "logout": "تسجيل الخروج",
     "logoutSuccess": "تم تسجيل الخروج بنجاح",
+    "logoutError": "فشل في تسجيل الخروج. يرجى المحاولة مرة أخرى.",
     "errorFetchUserData": "فشل في جلب بيانات المستخدم"
   },
   "about": {

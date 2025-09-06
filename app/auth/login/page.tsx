@@ -20,15 +20,20 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // 🔹 new state
   const router = useRouter();
   const { t } = useLanguage();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return; // 🔹 prevent double submit
+    setLoading(true);
+
     try {
       const response = await loginUser({ email, password });
       if (response.data.accessToken) {
         toast.success(t("login.success"));
-        if(response.data.user.role === 'MASTER_ADMIN') {
+        if (response.data.user.role === "MASTER_ADMIN") {
           router.push("/admin/products");
           return;
         }
@@ -40,6 +45,8 @@ export default function LoginPage() {
       toast.error(
         err.response?.data?.details?.message || t("login.errorGeneric")
       );
+    } finally {
+      setLoading(false); // 🔹 always reset loading
     }
   };
 
@@ -87,12 +94,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                {t("login.loginButton")}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? t("login.loading") : t("login.loginButton")}
               </Button>
             </div>
             <div className="text-center text-sm mt-4">
-              {t("login.dontHaveAccount")}
+              {t("login.dontHaveAccount")}{" "}
               <Link
                 href="/auth/register"
                 className="underline underline-offset-4"

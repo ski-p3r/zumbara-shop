@@ -75,7 +75,7 @@ export default function OrderDetailPage() {
     <div className="min-h-screen bg-background w-full">
       <div className="w-full px-6 py-8">
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex  flex-col  space-y-5 sm:flex-row sm:items-center sm:justify-between mb-6">
             <h1
               className={`text-3xl font-bold text-foreground ${
                 isRTL ? "text-right" : "text-left"
@@ -181,9 +181,7 @@ export default function OrderDetailPage() {
                     <th className="text-center py-4 px-6 font-semibold text-foreground text-sm uppercase tracking-wide">
                       {t("orderDetail.quantity")}
                     </th>
-                    <th className="text-center py-4 px-6 font-semibold text-foreground text-sm uppercase tracking-wide">
-                      {t("orderDetail.status")}
-                    </th>
+                   
                   </tr>
                 </thead>
                 <tbody>
@@ -236,18 +234,7 @@ export default function OrderDetailPage() {
                           {item.quantity}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-center">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
-                            item.status
-                          )}`}
-                        >
-                          <div className="w-1.5 h-1.5 rounded-full mr-2 bg-current opacity-75"></div>
-                          {t(
-                            `orderDetail.itemStatus.${item.status.toLowerCase()}`
-                          )}
-                        </span>
-                      </td>
+                     
                     </tr>
                   ))}
                 </tbody>

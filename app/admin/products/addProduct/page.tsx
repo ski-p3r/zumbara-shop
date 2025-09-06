@@ -31,6 +31,7 @@ export default function AddProductPage() {
   });
   const [categories, setCategories] = useState<any[]>([]); // State to store categories
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -53,11 +54,14 @@ export default function AddProductPage() {
       categoryId: formData.categoryId || "",
       basePrice: Number(formData.basePrice || 0),
     };
+    setLoading(true);
     try {
       await createProduct(productData); // Use the createProduct function
       router.push("/admin/products"); // Redirect to the products page
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to create product");
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -149,9 +153,11 @@ export default function AddProductPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button type="submit">
-                <Plus className="h-4 w-4 mr-2" /> Create Product
-              </Button>
+            <Button disabled={loading} type="submit">
+  {!loading && <Plus className="h-4 w-4 mr-2" />}
+  {loading ? "Creating..." : "Create Product"}
+</Button>
+
             </div>
           </form>
         </div>

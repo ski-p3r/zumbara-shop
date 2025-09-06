@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import i18n from "@/lib/i18n";
 import { useLanguage } from "@/providers/language-provider";
 import { registerUser } from "@/utils/api/auth";
+import { set } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,7 +31,7 @@ export default function RegisterPage() {
   });
 
   const [phoneError, setPhoneError] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState(false);
   // Handle phone input changes
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9+]/g, ""); // Allow only digits and +
@@ -53,6 +54,7 @@ export default function RegisterPage() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     if (!/^(\+2519\d{8}|09\d{8})$/.test(form.phone)) {
       setPhoneError(t("register.phoneInvalid"));
       return;
@@ -79,6 +81,8 @@ export default function RegisterPage() {
       toast.error(
         err.response?.data?.details?.message || t("register.errorGeneric")
       );
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -183,8 +187,9 @@ export default function RegisterPage() {
                   }
                 />
               </div>
-              <Button type="submit" className="w-full">
-                {t("register.registerButton")}
+              <Button disabled={loading} type="submit" className="w-full">
+                {loading ? t("register.loading") :t("register.registerButton")}
+                
               </Button>
             </div>
             <div className="text-center text-sm mt-4">

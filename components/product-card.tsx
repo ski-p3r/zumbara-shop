@@ -11,6 +11,7 @@ import { deleteProduct } from "@/utils/api/product"; // Import deleteProduct fun
 import { toast } from "sonner";
 import Link from "next/link";
 import { getUserFromCookie } from "@/utils/store";
+import { useRouter } from "next/navigation";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -46,6 +47,8 @@ export function ProductCard({
 }) {
   const { t } = useLanguage();
   const variant = product.variants[0];
+  const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [user, setUser] = useState<any | null>(null); // State to store user data
   const [isDeleting, setIsDeleting] = useState(false); // State for delete operation
 
@@ -74,10 +77,13 @@ export function ProductCard({
   const handleDeleteProduct = async () => {
     setIsDeleting(true);
     try {
-      await deleteProduct(product.id); // Call deleteProduct function
+      await deleteProduct(product.id);
       toast.success("Product deleted successfully");
+      setIsDialogOpen(false); // Close dialog on success
+      router.refresh(); // Refresh page to remove deleted product
     } catch (error) {
       toast.error("Failed to delete product");
+      setIsDialogOpen(false); // Close dialog on error
     } finally {
       setIsDeleting(false);
     }
@@ -226,7 +232,7 @@ export function ProductCard({
                 </DialogHeader>
                 <p>Are you sure you want to delete this product?</p>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => {}}>
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                     Cancel
                   </Button>
                   <Button

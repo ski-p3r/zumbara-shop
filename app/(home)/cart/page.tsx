@@ -48,7 +48,6 @@ export default function CartPage() {
     setQuantityLoading(id);
     try {
       await updateCartItem(id, newQuantity);
-      // Recalculate all item totals and cart total
       const updatedItems = cart.items.map((p: any) =>
         p.id === id
           ? { ...p, quantity: newQuantity, total: newQuantity * p.variantPrice }
@@ -79,7 +78,6 @@ export default function CartPage() {
   const handleDelete = async (id: string) => {
     try {
       await removeItemFromCart(id);
-      // Remove item and recalculate all totals
       const updatedItems = cart.items
         .filter((p: any) => p.id !== id)
         .map((p: any) => ({ ...p, total: p.quantity * p.variantPrice }));
@@ -117,47 +115,47 @@ export default function CartPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">{t("cart.title")}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">{t("cart.title")}</h1>
 
       {cart.items.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4">🛒</div>
-          <h2 className="text-2xl font-semibold mb-4">{t("cart.empty")}</h2>
-          <p className="text-muted-foreground mb-8">
+        <div className="text-center py-12 md:py-16">
+          <div className="text-5xl md:text-6xl mb-4">🛒</div>
+          <h2 className="text-xl md:text-2xl font-semibold mb-4">{t("cart.empty")}</h2>
+          <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
             {t("cart.emptyDescription")}
           </p>
           <Link href="/shop">
-            <Button size="lg">{t("cart.continueShopping")}</Button>
+            <Button size="lg" className="w-full sm:w-auto">{t("cart.continueShopping")}</Button>
           </Link>
         </div>
       ) : (
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 md:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {cart.items.map((item: any) => (
-              <Card key={item.id} className="overflow-hidden p-0 py-3">
-                <CardContent className="p-6 py-0">
-                  <div className="flex gap-4">
+              <Card key={item.id} className="overflow-hidden p-0">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     {/* Product Image */}
                     <div className="flex-shrink-0">
                       <img
                         src={item.variantImage || "/placeholder.svg"}
                         alt={item.productName}
-                        className="w-24 h-24 object-cover rounded-lg"
+                        className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-lg"
                       />
                     </div>
 
                     {/* Product Details */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold mb-1 truncate">
+                      <h3 className="font-semibold text-sm md:text-base mb-1 truncate">
                         {item.productName}
                       </h3>
-                      <p className="text-lg font-bold text-primary mb-2">
+                      <p className="text-base md:text-lg font-bold text-primary mb-2">
                         ETB {item.variantPrice}
                       </p>
 
                       {/* Quantity Controls */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3">
                         <Button
                           variant="outline"
                           size="sm"
@@ -167,7 +165,7 @@ export default function CartPage() {
                         >
                           -
                         </Button>
-                        <span className="font-semibold min-w-[2rem] text-center">
+                        <span className="font-semibold text-sm md:text-base min-w-[2rem] text-center">
                           {item.quantity}
                         </span>
                         <Button
@@ -186,7 +184,7 @@ export default function CartPage() {
                             setItemToDelete(item.id);
                             setDeleteConfirm(true);
                           }}
-                          className="ml-4 text-destructive hover:text-destructive"
+                          className="ml-2 md:ml-4 text-destructive hover:text-destructive text-sm md:text-base"
                         >
                           {t("cart.remove")}
                         </Button>
@@ -195,10 +193,10 @@ export default function CartPage() {
 
                     {/* Item Total */}
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground mb-1">
+                      <p className="text-xs md:text-sm text-muted-foreground mb-1">
                         {t("cart.total")}
                       </p>
-                      <p className="text-xl font-bold">ETB {item.total}</p>
+                      <p className="text-lg md:text-xl font-bold">ETB {item.total}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -209,24 +207,24 @@ export default function CartPage() {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <Card className="sticky top-4 p-0">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">
+              <CardContent className="p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-4">
                   {t("cart.orderSummary")}
                 </h2>
 
-                <div className="space-y-3 mb-6">
-                  <div className="flex justify-between">
+                <div className="space-y-3 mb-4 md:mb-6">
+                  <div className="flex justify-between text-sm md:text-base">
                     <span>
                       {t("cart.items")} ({cart.numberOfItems})
                     </span>
                     <span>ETB {cart.total}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm md:text-base">
                     <span>{t("cart.shipping")}</span>
                     <span className="text-green-600">{t("cart.free")}</span>
                   </div>
                   <div className="border-t pt-3">
-                    <div className="flex justify-between text-lg font-semibold">
+                    <div className="flex justify-between text-base md:text-lg font-semibold">
                       <span>{t("cart.total")}</span>
                       <span>ETB {cart.total}</span>
                     </div>
@@ -239,7 +237,7 @@ export default function CartPage() {
                   </Button>
                 </Link>
                 <Link href="/shop">
-                  <Button variant="outline" className="w-full bg-transparent">
+                  <Button variant="outline" className="w-full bg-transparent" size="lg">
                     {t("cart.continueShopping")}
                   </Button>
                 </Link>
@@ -251,13 +249,13 @@ export default function CartPage() {
 
       {/* Delete Confirmation Dialog */}
       {deleteConfirm && itemToDelete && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md mx-4">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-sm md:max-w-md mx-auto">
+            <CardContent className="p-4 md:p-6">
+              <h3 className="text-lg md:text-xl font-semibold mb-4">
                 {t("cart.confirmDelete")}
               </h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6">
                 {t("cart.confirmDeleteDescription")}
               </p>
               <div className="flex gap-3">
@@ -267,14 +265,14 @@ export default function CartPage() {
                     setDeleteConfirm(false);
                     setItemToDelete(null);
                   }}
-                  className="flex-1"
+                  className="flex-1 text-sm md:text-base"
                 >
                   {t("cart.cancel")}
                 </Button>
                 <Button
                   variant="destructive"
                   onClick={() => handleDelete(itemToDelete)}
-                  className="flex-1"
+                  className="flex-1 text-sm md:text-base"
                 >
                   {t("cart.delete")}
                 </Button>
