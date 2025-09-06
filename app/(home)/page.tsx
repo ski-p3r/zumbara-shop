@@ -113,20 +113,19 @@ export default function Home() {
       <div className="mt-8">
         {loading ? (
           <div className="col-span-full flex justify-center items-center py-12">
-            <span className="text-lg text-gray-500">{t("home.loadingProducts")}</span>
+            <span className="text-lg text-gray-500">
+              {t("home.loadingProducts")}
+            </span>
           </div>
         ) : (
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  isListView={false}
-                />
-              ))
-            ) }
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isListView={false}
+              />
+            ))}
           </div>
         )}
       </div>
