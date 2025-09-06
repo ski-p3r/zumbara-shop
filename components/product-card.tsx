@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { ShoppingCart, Star, Trash2 } from "lucide-react"; // Import Trash2 icon
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"; // Import shadcn dialog components
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog"; // Import shadcn dialog components
 import { useLanguage } from "@/providers/language-provider";
 import { addItemToCart } from "@/utils/api/cart";
 import { deleteProduct } from "@/utils/api/product"; // Import deleteProduct function
@@ -151,10 +158,7 @@ export function ProductCard({
                       </DialogHeader>
                       <p>Are you sure you want to delete this product?</p>
                       <DialogFooter>
-                        <Button
-                          variant="outline"
-                          onClick={() => {}}
-                        >
+                        <Button variant="outline" onClick={() => {}}>
                           Cancel
                         </Button>
                         <Button
@@ -188,7 +192,7 @@ export function ProductCard({
           />
         </div>
         <div className="p-3 relative w-full flex-1 flex flex-col">
-          <h3 className="text-base font-semibold text-card-foreground mb-2">
+          <h3 className="text-sm md:text-base font-semibold text-card-foreground mb-2 leading-3">
             {user ? (
               user.role === "CUSTOMER" ? (
                 <Link href={`/shop/${product.id}`}>{product.name}</Link>
@@ -206,7 +210,7 @@ export function ProductCard({
           </p>
           <StarRating rating={product.rating} />
           <div className="flex items-center justify-between mt-4">
-            <span className="text-lg font-bold text-primary">
+            <span className="text-base md:text-lg font-bold text-primary">
               {variant?.price} ETB
             </span>
           </div>

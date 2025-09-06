@@ -83,7 +83,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="py-3">
-        <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 gap-4 sm:gap-8 md:gap-12 lg:gap-16">
+        <div className="flex items-center justify-between px-3 md:px-8 lg:px-12 gap-4 sm:gap-8 md:gap-12 lg:gap-16">
           {/* Logo */}
           <div className="flex items-center space-x-3 sm:space-x-4">
             <Link href="/">
@@ -114,24 +114,29 @@ export default function Navbar() {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Language Selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align={isRTL ? "start" : "end"} className="min-w-[120px]">
-                {languages.map((lang) => (
-                  <DropdownMenuItem
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code as any)}
-                    className={language === lang.code ? "bg-accent" : ""}
-                  >
-                    {lang.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="hidden md:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align={isRTL ? "start" : "end"}
+                  className="min-w-[120px]"
+                >
+                  {languages.map((lang) => (
+                    <DropdownMenuItem
+                      key={lang.code}
+                      onClick={() => setLanguage(lang.code as any)}
+                      className={language === lang.code ? "bg-accent" : ""}
+                    >
+                      {lang.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
             {/* Theme Toggle */}
             <DropdownMenu>
@@ -141,7 +146,10 @@ export default function Navbar() {
                   <Moon className="absolute h-4 w-4 sm:h-5 sm:w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align={isRTL ? "start" : "end"} className="min-w-[120px]">
+              <DropdownMenuContent
+                align={isRTL ? "start" : "end"}
+                className="min-w-[120px]"
+              >
                 <DropdownMenuItem onClick={() => setTheme("light")}>
                   Light
                 </DropdownMenuItem>
@@ -181,7 +189,10 @@ export default function Navbar() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align={isRTL ? "start" : "end"} className="min-w-[120px]">
+                <DropdownMenuContent
+                  align={isRTL ? "start" : "end"}
+                  className="min-w-[120px]"
+                >
                   {user && user.role === "MASTER_ADMIN" && (
                     <DropdownMenuItem
                       onClick={() => router.push("/admin/products")}
