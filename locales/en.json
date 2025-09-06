@@ -33,6 +33,7 @@
     "showPassword": "Show Password",
     "hidePassword": "Hide Password",
     "loginButton": "Login",
+    "loading":"Logging...",
     "dontHaveAccount": "Don't have an account? ",
     "registerLink": "Sign up",
     "success": "Login successful!",
@@ -55,6 +56,7 @@
     "phonePlaceholder": "+2519xxxxxxxx",
     "address": "Address",
     "addressPlaceholder": "Addis Ababa, Ethiopia",
+    "loading": "Registering...",
     "registerButton": "Register",
     "alreadyHaveAccount": "Already have an account? ",
     "loginLink": "Login",
@@ -92,6 +94,7 @@
   },
   "home": {
     "errorFetchCategories": "Failed to fetch categories. Please try again.",
+    "loadingProducts": "Loading products...",
     "backToParentCategory": "Back to parent category",
     "featureCardTitle": "Shop Smarter, Live Better",
     "featureCardDesc": "Enjoy curated collections, exclusive offers, and seamless shopping experience.",
@@ -223,6 +226,9 @@
   "myOrders": {
     "title": "My Orders",
     "loading": "Loading your orders...",
+    "invoice": "Invoice",
+    "date": "Date",
+    "status": "Status",
     "errorFetch": "Failed to fetch orders. Please try again.",
     "noOrders": "You have no orders yet.",
     "previous": "Previous",
@@ -306,6 +312,7 @@
     "profilePictureUpdateFailed": "Failed to update profile picture",
     "logout": "Logout",
     "logoutSuccess": "Logged out successfully",
+    "logoutError": "Failed to logout. Please try again.",
     "errorFetchUserData": "Failed to fetch user data"
   },
   "contact": {

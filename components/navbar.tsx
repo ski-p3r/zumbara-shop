@@ -60,10 +60,10 @@ export default function Navbar() {
       await clearAllCookies();
       setUser(null);
       router.push("/");
-      toast.success(t("nav.logoutSuccess"));
+      toast.success(t("profile.logoutSuccess"));
     } catch (error) {
       console.error("Error during logout:", error);
-      toast.error(t("nav.logoutError"));
+      toast.error(t("profile.logoutError"));
     }
   };
 

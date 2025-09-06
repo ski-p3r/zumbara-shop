@@ -113,11 +113,12 @@ export default function Home() {
       <div className="mt-8">
         {loading ? (
           <div className="col-span-full flex justify-center items-center py-12">
-            <span className="text-lg text-gray-500">Loading...</span>
+            <span className="text-lg text-gray-500">{t("home.loadingProducts")}</span>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
-            {Array.isArray(products) && products.length > 0 ? (
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+
               products.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -125,11 +126,7 @@ export default function Home() {
                   isListView={false}
                 />
               ))
-            ) : (
-              <div className="col-span-full text-center text-gray-400 py-8">
-                {t("home.noProducts")}
-              </div>
-            )}
+            ) }
           </div>
         )}
       </div>

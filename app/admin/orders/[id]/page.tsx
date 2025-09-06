@@ -7,9 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, FileText, Truck, Package } from "lucide-react";
+import { ArrowLeft, Package } from "lucide-react";
 import { toast } from "sonner";
-import { getOrderDetail } from "@/utils/api/orders"; // Import the provided function
+import { getOrderDetail } from "@/utils/api/orders";
 
 const statusSteps = [
   { key: "pending", label: "Pending", description: "Order received" },
@@ -39,7 +39,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
       setLoading(true);
       try {
-        const data = await getOrderDetail(orderId); // Use the provided function to fetch order details
+        const data = await getOrderDetail(orderId);
         setOrder(data);
       } catch (error) {
         toast.error("Failed to fetch order details.");
@@ -63,28 +63,19 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-      <div className=" px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center">
-            <Button variant="ghost" asChild className="mr-4">
+      <div className="px-4 py-8 md:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
+            <Button variant="ghost" asChild className="w-fit">
               <Link href="/admin/orders">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Orders
               </Link>
             </Button>
             <div>
-              <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Order {order.id}</h1>
-              <p className="text-muted-foreground">Order details and tracking information</p>
+              <h1 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-2">Order {order.id}</h1>
+              <p className="text-sm md:text-base text-muted-foreground">Order details and tracking information</p>
             </div>
-          </div>
-          <div className="flex space-x-2">
-            <Button variant="outline" asChild>
-              <Link href={`/admin/orders/${order.id}/invoice`}>
-                <FileText className="mr-2 h-4 w-4" />
-                View Invoice
-              </Link>
-            </Button>
-            
           </div>
         </div>
 
@@ -130,37 +121,39 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Variant</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Total</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {order.orderItems.map((item: any) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src={item.variant.imageUrl || "/placeholder.svg"}
-                          alt={item.product.name}
-                          className="w-12 h-12 rounded-md object-cover"
-                        />
-                        <span className="font-medium">{item.product.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{item.variant.variantName}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
-                    <TableCell>${item.price.toLocaleString()}</TableCell>
-                    <TableCell className="font-medium">${(item.price * item.quantity).toLocaleString()}</TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[200px] md:w-[300px]">Product</TableHead>
+                    <TableHead>Variant</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Total</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {order.orderItems.map((item: any) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <img
+                            src={item.variant.imageUrl || "/placeholder.svg"}
+                            alt={item.product.name}
+                            className="w-12 h-12 rounded-md object-cover"
+                          />
+                          <span className="font-medium text-sm md:text-base">{item.product.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm md:text-base">{item.variant.variantName}</TableCell>
+                      <TableCell className="text-sm md:text-base">{item.quantity}</TableCell>
+                      <TableCell className="text-sm md:text-base">${item.price.toLocaleString()}</TableCell>
+                      <TableCell className="font-medium text-sm md:text-base">${(item.price * item.quantity).toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

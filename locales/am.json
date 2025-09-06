@@ -33,6 +33,7 @@
     "showPassword": "የይለፍ ቃልን አሳይ",
     "hidePassword": "የይለፍ ቃልን ደብቅ",
     "loginButton": "ግባ",
+    "loading": "በመግባት ላይ...",
     "dontHaveAccount": "መለያ የለዎትም? ",
     "registerLink": "ይመዝገቡ",
     "success": "ግባት ተሳክቷል!",
@@ -55,6 +56,7 @@
     "phonePlaceholder": "+2519xxxxxxxx",
     "address": "አድራሻ",
     "addressPlaceholder": "አዲስ አበባ, ኢትዮጵያ",
+    "loading": "በመመዝገብ ላይ...",
     "registerButton": "ይመዝገቡ",
     "alreadyHaveAccount": "መለያ አለዎት? ",
     "loginLink": "ግባ",
@@ -92,6 +94,7 @@
   },
   "home": {
     "errorFetchCategories": "ምድቦችን ማግኘት አልተቻለም። እባክዎ ደግመው ይሞክሩ።",
+    "loadingProducts": "ምርቶችን በመጫን ላይ...",
     "backToParentCategory": "ወደ ወላጅ ምድብ ተመለስ",
     "featureCardTitle": "በቅናሽ ይግዙ፣ በተሻለ ይኑሩ",
     "featureCardDesc": "የተመረጡ ስብስቦች፣ ልዩ ቅናሾች፣ ቀላል ግዢ ሂደት ያግኙ።",
@@ -222,6 +225,9 @@
   },
   "myOrders": {
     "title": "ትዕዛዞቼ",
+    "invoice": "ኢንቮይስ",
+    "date": "ቀን",
+    "status": "ሁኔታ",
     "loading": "ትዕዛዞችዎን በመጫን ላይ...",
     "errorFetch": "ትዕዛዞችን ማግኘት አልተቻለም። እባክዎን ደግመው ይሞክሩ።",
     "noOrders": "ምንም ትዕዛዞች የሉዎትም።",
@@ -306,6 +312,7 @@
     "profilePictureUpdateFailed": "ፎቶ መቀየር አልተሳካም",
     "logout": "ውጣ",
     "logoutSuccess": "በተሳካ ሁኔታ ወጥተህ ነህ",
+    "logoutError": "ውጣ አልተሳካም። እባክዎ ደግመው ይሞክሩ።",
     "errorFetchUserData": "የተጠቃሚ መረጃ ማግኘት አልተሳካም"
   },
   "contact": {
