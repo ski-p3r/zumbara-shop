@@ -90,17 +90,16 @@ export default function Home() {
 
   return (
     <div className="w-full">
-    <div className="flex justify-end">
-    <Button asChild>
-              <Link href="products/addProduct">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Product
-              </Link>
-            </Button>
-    </div>
-      
+      <div className="flex justify-end">
+        <Button asChild>
+          <Link href="products/addProduct">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Product
+          </Link>
+        </Button>
+      </div>
+
       <div className="mt-8">
-        
         {categoryStack.length > 1 && (
           <button
             className="mt-4 rounded bg-primary/20 px-4 py-2"
@@ -115,22 +114,22 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className="mt-8 px-4">
+      <div className="mt-8 ">
         {loading ? (
           <div className="col-span-full flex justify-center items-center py-12">
             <span className="text-lg text-gray-500">Loading...</span>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {Array.isArray(products) && products.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.isArray(products) &&
+              products.length > 0 &&
               products.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
                   isListView={false}
                 />
-              ))
-            ) }
+              ))}
           </div>
         )}
       </div>

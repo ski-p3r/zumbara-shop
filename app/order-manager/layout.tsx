@@ -10,7 +10,7 @@ export default function OrderManagerLayout({
     // <AuthGuard allowedRoles={["MASTER_ADMIN", "ORDER_MANAGER"]}>
     <section className="min-h-screen">
       <Navbar />
-      <main className="min-w-full font-sans flex flex-col items-center justify-center h-full p-8 pb-20 gap-16 sm:px-20">
+      <main className="min-w-full font-sans flex flex-col items-center justify-center h-full p-3 md:p-8 pb-20 gap-16 sm:px-20">
         {children}
       </main>
     </section>

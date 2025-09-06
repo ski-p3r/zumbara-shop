@@ -25,8 +25,8 @@ export default function Home() {
 
   useEffect(() => {
     const fetchCarouselData = async () => {
-      const user=await getUserFromCookie()
-      console.log("user",user)
+      const user = await getUserFromCookie();
+      console.log("user", user);
       const promotions = await getPromotions();
       setEvents(promotions);
     };
@@ -49,7 +49,7 @@ export default function Home() {
       }
     };
     const fetchProducts = async () => {
-      console.log("user",await getUserFromCookie())
+      console.log("user", await getUserFromCookie());
       setLoading(true);
       try {
         const currentCategory = categoryStack[categoryStack.length - 1];
@@ -87,7 +87,6 @@ export default function Home() {
       setCategoryStack(categoryStack.slice(0, -1));
     }
   };
- 
 
   return (
     <div className="w-full">
@@ -111,13 +110,13 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className="mt-8 px-4">
+      <div className="mt-8">
         {loading ? (
           <div className="col-span-full flex justify-center items-center py-12">
             <span className="text-lg text-gray-500">Loading...</span>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {Array.isArray(products) && products.length > 0 ? (
               products.map((product) => (
                 <ProductCard
@@ -135,7 +134,7 @@ export default function Home() {
         )}
       </div>
       {/* Other custom sections after product list */}
-      <section className="mt-16 px-4">
+      <section className="mt-16">
         {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           <div className="bg-white dark:bg-zinc-900 rounded-xl shadow p-8 flex flex-col items-center">
