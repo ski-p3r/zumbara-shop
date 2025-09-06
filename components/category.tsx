@@ -18,7 +18,7 @@ export function CategoryCarouselApi({
   onCategoryClick,
 }: CategoryCarouselApiProps) {
   return (
-    <div className="flex flex-row gap-4 overflow-x-auto py-2">
+    <div className="flex flex-row gap-2 md:gap-4 overflow-x-auto py-2">
       {apiCategories.map((cat) => (
         <button
           key={cat.id}
