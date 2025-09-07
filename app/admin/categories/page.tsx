@@ -5,10 +5,29 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"; // Import Dialog components
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Folder } from "lucide-react";
-import { getCategories, deleteCategory } from "@/utils/api/category"; // Import functions
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"; // Import Dialog components
+import {
+  Search,
+  Plus,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Folder,
+} from "lucide-react";
+import { deleteCategory, getAllCategories } from "@/utils/api/category"; // Import functions
 import { Toaster, toast } from "sonner"; // Import Toaster and toast
 
 export default function CategoriesPage() {
@@ -25,7 +44,7 @@ export default function CategoriesPage() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await getCategories(); // Use getCategories from category.ts
+        const response = await getAllCategories(); // Use getCategories from category.ts
         setCategories(response.data); // Assuming response.data contains the categories
       } catch (err: any) {
         setError(err.message || "Failed to fetch categories.");
@@ -49,7 +68,9 @@ export default function CategoriesPage() {
 
     try {
       await deleteCategory(categoryToDelete); // Use deleteCategory from category.ts
-      setCategories((prev) => prev.filter((category) => category.id !== categoryToDelete)); // Remove from state
+      setCategories((prev) =>
+        prev.filter((category) => category.id !== categoryToDelete)
+      ); // Remove from state
       toast.success("Category deleted successfully!"); // Show success message
     } catch (err: any) {
       console.error("Failed to delete category:", err);
@@ -74,11 +95,15 @@ export default function CategoriesPage() {
       <div className="px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Category Management</h1>
-            <p className="text-muted-foreground">Organize your products with categories</p>
+            <h1 className="text-3xl font-serif font-bold text-foreground mb-2">
+              Category Management
+            </h1>
+            <p className="text-muted-foreground">
+              Organize your products with categories
+            </p>
           </div>
           <Button asChild>
-            <Link href="categories/addCategory" >
+            <Link href="categories/addCategory">
               <Plus className="mr-2 h-4 w-4" />
               Add Category
             </Link>
@@ -115,7 +140,9 @@ export default function CategoriesPage() {
                       <div>
                         <h3 className="font-semibold">{category.name}</h3>
                         <p className="text-sm text-muted-foreground">
-                          {category.parentId ? `Parent ID: ${category.parentId}` : "Top-level category"}
+                          {category.parentId
+                            ? `Parent ID: ${category.parentId}`
+                            : "Top-level category"}
                         </p>
                       </div>
                     </div>
@@ -148,14 +175,14 @@ export default function CategoriesPage() {
           </CardContent>
         </Card>
       </div>
-
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Delete</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this category? This action cannot be undone.
+              Are you sure you want to delete this category? This action cannot
+              be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

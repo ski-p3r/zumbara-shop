@@ -10,6 +10,18 @@ export async function getCategories(parentId?: string) {
     throw error;
   }
 }
+
+export async function getAllCategories(parentId?: string) {
+  try {
+    const params = parentId ? { parentId } : undefined;
+    const response = await axiosInstance.get("/category/root", { params });
+    return response;
+  } catch (error) {
+    // console.error("Error fetching categories:", error);
+    throw error;
+  }
+}
+
 export interface CreateCategoryPayload {
   name: string;
   imageUrl: string;
