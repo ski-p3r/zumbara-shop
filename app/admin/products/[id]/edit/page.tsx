@@ -7,11 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Toaster, toast } from "sonner";
 import { getProductById, editProduct } from "@/utils/api/product";
-import { getCategories } from "@/utils/api/category"; // Import the getCategories function
+import { getAllCategories, getCategories } from "@/utils/api/category"; // Import the getCategories function
 
 interface UpdateProductDto {
   name: string;
@@ -45,7 +51,7 @@ export default function EditProductPage() {
         const product = productResponse.data;
 
         // Fetch categories
-        const categoriesResponse = await getCategories();
+        const categoriesResponse = await getAllCategories();
         setCategories(categoriesResponse.data);
 
         // Set form data
@@ -65,7 +71,9 @@ export default function EditProductPage() {
     fetchProductAndCategories();
   }, [productId]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -102,7 +110,9 @@ export default function EditProductPage() {
   return (
     <div className=" min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <Toaster position="top-right" richColors />
-      <div className="max-w-7xl  px-6 py-8"> {/* Adjusted width */}
+      <div className="max-w-7xl  px-6 py-8">
+        {" "}
+        {/* Adjusted width */}
         <Card className="shadow-lg border-0">
           <CardHeader>
             <CardTitle>Edit Product</CardTitle>

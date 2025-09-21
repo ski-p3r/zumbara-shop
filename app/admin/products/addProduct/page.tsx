@@ -19,7 +19,7 @@ import {
 import { ArrowLeft, Plus } from "lucide-react";
 
 import { createProduct } from "@/utils/api/product"; // Import the createProduct function
-import { getCategories } from "@/utils/api/category"; // Import the getCategories function
+import { getAllCategories, getCategories } from "@/utils/api/category"; // Import the getCategories function
 
 export default function AddProductPage() {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function AddProductPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await getCategories(); // Fetch categories
+        const response = await getAllCategories(); // Fetch categories
         setCategories(response.data); // Set categories in state
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -60,7 +60,7 @@ export default function AddProductPage() {
       router.push("/admin/products"); // Redirect to the products page
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to create product");
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -153,11 +153,10 @@ export default function AddProductPage() {
             </Card>
 
             <div className="flex justify-end">
-            <Button disabled={loading} type="submit">
-  {!loading && <Plus className="h-4 w-4 mr-2" />}
-  {loading ? "Creating..." : "Create Product"}
-</Button>
-
+              <Button disabled={loading} type="submit">
+                {!loading && <Plus className="h-4 w-4 mr-2" />}
+                {loading ? "Creating..." : "Create Product"}
+              </Button>
             </div>
           </form>
         </div>
