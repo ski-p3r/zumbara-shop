@@ -45,6 +45,40 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
+function ProductImage({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className: string;
+}) {
+  const [imgSrc, setImgSrc] = useState(src);
+  const [hasError, setHasError] = useState(false);
+
+  const handleError = () => {
+    console.log("[v0] Image failed to load:", src);
+    setHasError(true);
+    setImgSrc("/product-placeholder.jpg");
+  };
+
+  const handleLoad = () => {
+    console.log("[v0] Image loaded successfully:", src);
+    setHasError(false);
+  };
+
+  return (
+    <img
+      src={imgSrc || "/placeholder.svg"}
+      alt={alt}
+      className={className}
+      onError={handleError}
+      onLoad={handleLoad}
+    />
+  );
+}
+
 export function ProductCard({
   product,
   isListView,
@@ -102,11 +136,13 @@ export function ProductCard({
         <CardContent className="p-0">
           <div className="flex gap-6">
             <div className="flex-shrink-0">
-              <img
-                src={variant.imageUrl || "/placeholder.svg"}
+              <ProductImage
+                src={
+                  variant?.imageUrl ||
+                  "/placeholder.svg?height=200&width=200&query=product-image"
+                }
                 alt={product.name}
                 className="w-full rounded-lg object-cover"
-                crossOrigin="anonymous"
               />
             </div>
             <div className="flex flex-1 flex-col justify-between">
@@ -184,11 +220,13 @@ export function ProductCard({
     <Card className="overflow-hidden p-0 h-full flex flex-col justify-between">
       <CardContent className="p-0 flex flex-col h-full">
         <div className="overflow-hidden">
-          <img
-            src={variant?.imageUrl || "/placeholder.svg"}
+          <ProductImage
+            src={
+              variant?.imageUrl ||
+              "/placeholder.svg?height=300&width=300&query=product-image"
+            }
             alt={product.name}
             className="w-full object-cover aspect-video transition-transform duration-300 hover:scale-110"
-            crossOrigin="anonymous"
           />
         </div>
         <div className="p-3 relative w-full flex-1 flex flex-col">
@@ -236,7 +274,10 @@ export function ProductCard({
                 </DialogHeader>
                 <p>Are you sure you want to delete this product?</p>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button
