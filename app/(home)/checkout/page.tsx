@@ -13,6 +13,7 @@ import {
   chapaPayOrder,
   checkPaymentStatus,
   createOrder,
+  onDeliveryPayOrder,
 } from "@/utils/api/checkout";
 
 export default function CheckoutPage() {
@@ -23,7 +24,9 @@ export default function CheckoutPage() {
     numberOfItems: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState<"Chapa" | "COD" | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"Chapa" | "COD" | null>(
+    null
+  );
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const router = useRouter();
   const [showWebView, setShowWebView] = useState(false);
@@ -83,9 +86,13 @@ export default function CheckoutPage() {
         const paymentInit: any = await chapaPayOrder(order.id);
         setPaymentUrl(paymentInit.paymentUrl);
         setInvoiceNumber(order.id);
-        window.open(paymentInit.paymentUrl, "_blank");
+        if (paymentInit.paymentUrl) {
+          window.open(paymentInit.paymentUrl, "_blank", "noopener,noreferrer");
+        }
         toast.info(t("checkout.chapaOpened"));
       } else if (paymentMethod === "COD") {
+        await onDeliveryPayOrder(order.id);
+        setInvoiceNumber(order.id);
         toast.success(t("checkout.paymentPendingCOD"));
         setPaymentMethod(null);
         router.push("/my-orders");
@@ -113,7 +120,9 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-8 max-w-4xl">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">{t("checkout.title")}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">
+        {t("checkout.title")}
+      </h1>
       {cart.items.length === 0 ? (
         <div className="text-center py-12 md:py-16">
           <div className="text-5xl md:text-6xl mb-4">🛒</div>
@@ -124,7 +133,9 @@ export default function CheckoutPage() {
             {t("checkout.emptyDescription")}
           </p>
           <Link href="/shop">
-            <Button size="lg" className="w-full sm:w-auto">{t("checkout.continueShopping")}</Button>
+            <Button size="lg" className="w-full sm:w-auto">
+              {t("checkout.continueShopping")}
+            </Button>
           </Link>
         </div>
       ) : (
@@ -156,7 +167,8 @@ export default function CheckoutPage() {
                           {t("checkout.quantity")}: {item.quantity}
                         </span>
                         <span className="ml-2 text-xs md:text-sm font-semibold bg-zinc-100 dark:bg-zinc-700 px-2 py-1 rounded-full">
-                          {t("checkout.subtotal")}: {item.quantity * item.variantPrice} ETB
+                          {t("checkout.subtotal")}:{" "}
+                          {item.quantity * item.variantPrice} ETB
                         </span>
                       </div>
                     </div>
@@ -288,7 +300,9 @@ export default function CheckoutPage() {
               onClick={verifyPaymentStatus}
               disabled={isLoading}
             >
-              {isLoading ? t("checkout.verifying") : t("checkout.verifyPayment")}
+              {isLoading
+                ? t("checkout.verifying")
+                : t("checkout.verifyPayment")}
             </Button>
             <Button
               variant="outline"

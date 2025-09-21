@@ -6,7 +6,8 @@ export async function uploadFile(file: File) {
 
   try {
     const response = await axios.post(
-      "https://files.zumbarashop.com/server/api/upload",
+      "https://api.zumbarashop.com/api/upload",
+      // "https://files.zumbarashop.com/server/api/upload",
       formData,
       {
         headers: {
