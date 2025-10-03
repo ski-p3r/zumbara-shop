@@ -20,8 +20,13 @@ interface PaymentMethod {
 
 export default function BankTransferPage() {
   const { t } = useLanguage();
-  const orderId = localStorage.getItem("orderId");
-  const total = localStorage.getItem("total");
+  const [total, setTotal] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setOrderId(localStorage.getItem("orderId"));
+    setTotal(localStorage.getItem("total"));
+  }, []);
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
