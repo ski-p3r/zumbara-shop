@@ -78,6 +78,7 @@ export default function AdminNavbar() {
     { key: "nav.promotions", href: "/admin/promotions" },
     { key: "nav.categories", href: "/admin/categories" },
     { key: "nav.orders", href: "/admin/orders" },
+    { key: "Payments", href: "/admin/proofs" },
   ];
 
   return (

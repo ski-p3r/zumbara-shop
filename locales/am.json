@@ -221,7 +221,9 @@
     "errorReinitializePayment": "ክፍያን እንደገና ማስጀመር አልተቻለም።",
     "errorVerifyPayment": "ክፍያን ማረጋገጥ አልተቻለም።",
     "errorInvalidDetails": "የተሳሳተ ዝርዝር ተሰጥቷል።",
-    "errorProcessPayment": "ክፍያን ማስኬድ አልተቻለም።"
+    "errorProcessPayment": "ክፍያን ማስኬድ አልተቻለም።",
+    "bankTransfer": "ባንክ ትራንስፈር",
+    "bankTransferInfo": "እባክዎ የግዢዎን ጠቅላላ መጠን ወደ ባንክ ሂሳብ ያስተላልፉ። ክፍያውን ከማረጋገጥ በኋላ ትዕዛዝዎ ይታወቃል።"
   },
   "myOrders": {
     "title": "ትዕዛዞቼ",
@@ -328,11 +330,11 @@
     "emailPlaceholder": "ኢሜይልዎን ያስገቡ",
     "messagePlaceholder": "መልእክትዎን እዚህ ያስገቡ..."
   },
- "about": {
+  "about": {
     "title": "ስለ እኛ",
     "subtitle": "ስለ ዙምባራ እና ተልዕኳችን የበለጠ ይወቁ።",
     "mission": "ተልዕኳችን በኢትዮጵያ ውስጥ ለሁሉም ሰው ግብይትን ቀላል፣ ፈጣን እና አስደሳች ማድረግ ነው።",
     "values": "የደንበኞችን እርካታ፣ ፈጠራ እና የማህበረሰብ ድጋፍ እናከብራለን።",
     "team": "ቡድናችን ምርጡን የመስመር ላይ ግብይት ልምድ ለማቅረብ በጉጉት ይሰራል።"
-}
+  }
 }

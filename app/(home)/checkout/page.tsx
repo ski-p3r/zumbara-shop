@@ -7,7 +7,7 @@ import { useLanguage } from "@/providers/language-provider";
 import { getCart } from "@/utils/api/cart";
 import { toast } from "sonner";
 import Link from "next/link";
-import { Check, CreditCard, Wallet } from "lucide-react";
+import { Banknote, Check, CreditCard, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   chapaPayOrder,
@@ -24,9 +24,9 @@ export default function CheckoutPage() {
     numberOfItems: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState<"Chapa" | "COD" | null>(
-    null
-  );
+  const [paymentMethod, setPaymentMethod] = useState<
+    "Chapa" | "COD" | "BankTransfer" | null
+  >(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const router = useRouter();
   const [showWebView, setShowWebView] = useState(false);
@@ -90,12 +90,13 @@ export default function CheckoutPage() {
           window.open(paymentInit.paymentUrl, "_blank", "noopener,noreferrer");
         }
         toast.info(t("checkout.chapaOpened"));
-      } else if (paymentMethod === "COD") {
+      } else if (paymentMethod === "BankTransfer") {
         await onDeliveryPayOrder(order.id);
         setInvoiceNumber(order.id);
-        toast.success(t("checkout.paymentPendingCOD"));
+        localStorage.setItem("orderId", order.id);
+        localStorage.setItem("total", cart.total);
         setPaymentMethod(null);
-        router.push("/my-orders");
+        router.push("/bank-transfer");
       }
     } catch (error: any) {
       if (error.response?.status === 400) {
@@ -216,7 +217,8 @@ export default function CheckoutPage() {
                     {t("checkout.selectPaymentMethod")}
                   </span>
                   <div className="flex flex-col gap-2">
-                    <div
+                    {/* Chapa */}
+                    {/* <div
                       className={`flex items-center p-2 px-3 rounded-lg cursor-pointer transition-all border ${
                         paymentMethod === "Chapa"
                           ? "bg-green-100 dark:bg-green-900"
@@ -240,8 +242,9 @@ export default function CheckoutPage() {
                       <span className="text-sm md:text-base text-zinc-900 dark:text-zinc-100">
                         {t("checkout.chapa")}
                       </span>
-                    </div>
-                    <div
+                    </div> */}
+                    {/* Cash on Delivery */}
+                    {/* <div
                       className={`flex items-center p-2 px-3 rounded-lg cursor-pointer transition-all border ${
                         paymentMethod === "COD"
                           ? "bg-green-100 dark:bg-green-900"
@@ -264,6 +267,31 @@ export default function CheckoutPage() {
                       </div>
                       <span className="text-sm md:text-base text-zinc-900 dark:text-zinc-100">
                         {t("checkout.cashOnDelivery")}
+                      </span>
+                    </div> */}
+                    <div
+                      className={`flex items-center p-2 px-3 rounded-lg cursor-pointer transition-all border ${
+                        paymentMethod === "BankTransfer"
+                          ? "bg-green-100 dark:bg-green-900"
+                          : "bg-white dark:bg-zinc-900"
+                      }`}
+                      onClick={() => setPaymentMethod("BankTransfer")}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
+                          paymentMethod === "BankTransfer"
+                            ? "border-green-500 bg-green-500"
+                            : "border-zinc-400 bg-white dark:bg-zinc-900"
+                        }`}
+                      >
+                        {paymentMethod === "BankTransfer" && (
+                          <Check size={14} color="white" />
+                        )}
+                      </div>
+                      <span className="text-sm md:text-base text-zinc-900 dark:text-zinc-100">
+                        {t("checkout.bankTransfer")}
                       </span>
                     </div>
                   </div>

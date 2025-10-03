@@ -68,3 +68,47 @@ export async function reInitializeChapa(invoiceNumber: string) {
     throw error;
   }
 }
+
+export async function uploadProof({
+  orderId,
+  imageUrl,
+}: {
+  orderId: string;
+  imageUrl: string;
+}) {
+  try {
+    const response = await axios.post(`/payment/proof/`, { orderId, imageUrl });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getProofs() {
+  try {
+    const response = await axios.get(`/payment/proofs/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function approveProof(orderId: string, status: string) {
+  try {
+    const response = await axios.post(`/payment/proof/status`, {
+      orderId,
+      status,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function rejectProof(proofId: string) {
+  try {
+    await axios.delete(`/payment/proof/${proofId}`);
+  } catch (error) {
+    throw error;
+  }
+}

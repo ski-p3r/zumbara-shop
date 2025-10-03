@@ -33,7 +33,7 @@
     "showPassword": "Show Password",
     "hidePassword": "Hide Password",
     "loginButton": "Login",
-    "loading":"Logging...",
+    "loading": "Logging...",
     "dontHaveAccount": "Don't have an account? ",
     "registerLink": "Sign up",
     "success": "Login successful!",
@@ -221,7 +221,9 @@
     "errorReinitializePayment": "Failed to reinitialize payment.",
     "errorVerifyPayment": "Failed to verify payment.",
     "errorInvalidDetails": "Invalid details provided.",
-    "errorProcessPayment": "Failed to process payment."
+    "errorProcessPayment": "Failed to process payment.",
+    "bankTransfer": "Bank Transfer",
+    "bankTransferInfo": "Please transfer the total amount to our bank account. Your order will be processed once we confirm the payment."
   },
   "myOrders": {
     "title": "My Orders",
