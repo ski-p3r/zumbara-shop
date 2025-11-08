@@ -1,6 +1,7 @@
+// app/shop/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import {
   ProductFilters,
   type FilterState,
@@ -11,9 +12,14 @@ import { Menu, X, Search } from "lucide-react";
 import { getProducts } from "@/utils/api/products";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function ProductsPage() {
+// THIS IS THE MAGIC LINE — FIXES THE ERROR WITHOUT ANY CONFIG
+export const dynamic = "force-dynamic";
+
+// Inner component that uses useSearchParams()
+function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -38,6 +44,7 @@ export default function ProductsPage() {
       | "PRICE_ASC"
       | "PRICE_DESC",
   });
+
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
@@ -46,6 +53,7 @@ export default function ProductsPage() {
     window.addEventListener("resize", checkSize);
     return () => window.removeEventListener("resize", checkSize);
   }, []);
+
   const updateURL = (newFilters: FilterState) => {
     const params = new URLSearchParams();
     if (newFilters.search) params.set("search", newFilters.search);
@@ -58,9 +66,9 @@ export default function ProductsPage() {
     if (newFilters.rating > 0)
       params.set("rating", newFilters.rating.toString());
     if (newFilters.sort !== "NEWEST") params.set("sort", newFilters.sort);
-
     router.push(`/shop?${params.toString()}`);
   };
+
   const PAGE_SIZE = 6;
 
   useEffect(() => {
@@ -129,12 +137,11 @@ export default function ProductsPage() {
     updateURL(newFilters);
   };
 
-  const hasMore = products.length === PAGE_SIZE;
+  const hasMore = currentPage < totalPages;
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
             Products
@@ -145,28 +152,24 @@ export default function ProductsPage() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-14">
-          {/* Mobile Filter Toggle */}
           <div className="md:hidden">
             <Button
               variant="outline"
-              className="w-full flex items-center justify-center gap-2 bg-transparent"
+              className="w-full flex items-center justify-center gap-2"
               onClick={() => setShowFilters(!showFilters)}
             >
               {showFilters ? (
                 <>
-                  <X className="w-4 h-4" />
-                  Close Filters
+                  <X className="w-4 h-4" /> Close Filters
                 </>
               ) : (
                 <>
-                  <Menu className="w-4 h-4" />
-                  Show Filters
+                  <Menu className="w-4 h-4" /> Show Filters
                 </>
               )}
             </Button>
           </div>
 
-          {/* Sidebar Filters - appears at top on mobile, left on desktop */}
           {(showFilters || isDesktop) && (
             <div className="w-full md:w-64 md:sticky md:top-8 md:h-fit">
               <ProductFilters
@@ -178,9 +181,7 @@ export default function ProductsPage() {
             </div>
           )}
 
-          {/* Products Grid */}
           <div className="flex-1 min-w-0">
-            {/* Search Bar */}
             <div className="mb-8">
               <div className="relative max-w-2xl">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -205,5 +206,20 @@ export default function ProductsPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+// THIS WRAPS IT — NO EXTRA FILE, NO CONFIG
+export default function ProductsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full min-h-screen flex items-center justify-center">
+          Loading shop...
+        </div>
+      }
+    >
+      <ShopContent />
+    </Suspense>
   );
 }

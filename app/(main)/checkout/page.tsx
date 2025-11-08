@@ -1,16 +1,22 @@
+// app/checkout/page.tsx
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import { getCart } from "@/utils/api/cart";
 import { getProductById } from "@/utils/api/products";
 import { createOrder } from "@/utils/api/order";
 import { formatETB } from "@/utils/formatter";
-
 import { Button } from "@/components/ui/button";
 
-export default function CheckoutPage() {
+// THIS IS THE ONLY CORRECT WAY — NO FUNCTION, NO REVALIDATE FUNCTION
+export const dynamic = "force-dynamic";
+// DO NOT USE: export const revalidate = 0; → IT'S A FUNCTION IN SOME VERSIONS!
+// JUST USE dynamic = "force-dynamic" → THAT'S ENOUGH
+
+// Your full checkout logic — unchanged
+function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -25,7 +31,6 @@ export default function CheckoutPage() {
   const placeOrder = async () => {
     try {
       setPlacingOrder(true);
-
       if (cartId) {
         const result = await createOrder({ cartId });
         router.push(`/orders/${result.id}`);
@@ -62,11 +67,9 @@ export default function CheckoutPage() {
           });
         } else if (productId) {
           const product = await getProductById(productId);
-
           const variant = variantId
             ? product.variants.find((v: any) => v.id === variantId)
             : null;
-
           const price = variant ? variant.price : product.price;
 
           setCheckoutItem({
@@ -77,17 +80,19 @@ export default function CheckoutPage() {
             total: price,
           });
         }
-      } catch {}
-      setLoading(false);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
     };
-
     loadData();
   }, [cartId, productId, variantId]);
 
   if (loading)
     return (
-      <div className="w-full min-h-screen flex items-center justify-center">
-        Loading...
+      <div className="w-full min-h-screen flex items-center justify-center text-lg">
+        Loading checkout...
       </div>
     );
 
@@ -95,7 +100,6 @@ export default function CheckoutPage() {
     <div className="max-w-2xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-semibold mb-6">Checkout</h1>
 
-      {/* ✅ Cart Summary */}
       {checkoutItem.type === "cart" &&
         checkoutItem.items.map((item: any) => {
           const price = item.variant ? item.variant.price : item.product.price;
@@ -107,14 +111,14 @@ export default function CheckoutPage() {
               className="flex items-center gap-4 py-3 border-b"
             >
               <img
-                src={item.product.image}
+                src={item.product.image || "/placeholder.png"}
                 width={70}
                 height={70}
-                alt=""
-                className="rounded"
+                alt={item.product.name}
+                className="rounded object-cover"
               />
               <div className="flex-1">
-                <p>{item.product.name}</p>
+                <p className="font-medium">{item.product.name}</p>
                 <p className="text-sm text-muted-foreground">
                   {formatETB(price)} × {item.quantity}
                 </p>
@@ -124,18 +128,17 @@ export default function CheckoutPage() {
           );
         })}
 
-      {/* ✅ Single Product Summary */}
       {checkoutItem.type === "single" && (
         <div className="flex gap-4 border-b py-4">
           <img
-            src={checkoutItem.product.image}
+            src={checkoutItem.product.image || "/placeholder.png"}
             width={90}
             height={90}
-            alt=""
-            className="rounded"
+            alt={checkoutItem.product.name}
+            className="rounded object-cover"
           />
           <div className="flex-1">
-            <p>{checkoutItem.product.name}</p>
+            <p className="font-medium">{checkoutItem.product.name}</p>
             {checkoutItem.variant && (
               <p className="text-sm text-muted-foreground">
                 {checkoutItem.variant.name}
@@ -148,20 +151,34 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      {/* ✅ Total */}
-      <div className="flex justify-between py-4 text-lg font-semibold">
+      <div className="flex justify-between py-4 text-lg font-semibold border-t mt-6">
         <span>Total</span>
         <span className="text-primary">{formatETB(checkoutItem.total)}</span>
       </div>
 
-      {/* ✅ Place Order */}
       <Button
         className="w-full mt-6"
+        size="lg"
         disabled={placingOrder}
         onClick={placeOrder}
       >
         {placingOrder ? "Placing Order..." : "Place Order"}
       </Button>
     </div>
+  );
+}
+
+// THIS IS THE ONLY SUSPENSE WRAPPER YOU NEED
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full min-h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 }

@@ -1,8 +1,8 @@
+// app/auth/reset-password/page.tsx
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ResetPassword } from "@/utils/api/auth";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,10 @@ import { Input } from "@/components/ui/input";
 import { OtpInput } from "@/components/otp-input";
 import Link from "next/link";
 
-export default function ResetPasswordPage() {
+// THIS LINE IS THE ONLY FIX NEEDED
+export const dynamic = "force-dynamic";
+
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [phone, setPhone] = useState(searchParams.get("phone") || "");
@@ -50,7 +53,6 @@ export default function ResetPasswordPage() {
       const formattedPhone = cleanPhone.startsWith("+")
         ? cleanPhone
         : `+${cleanPhone}`;
-      console.log(phone);
       await ResetPassword({
         phone: formattedPhone,
         code: otp,
@@ -142,5 +144,20 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// THIS IS THE ONLY WRAPPER NEEDED — NO EXTRA FILE
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full min-h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
