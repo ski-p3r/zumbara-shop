@@ -17,6 +17,7 @@ import {
   LogOut,
   Users,
   Megaphone,
+  Home,
 } from "lucide-react";
 
 import {
@@ -95,35 +96,27 @@ function BrandLogo() {
   const isCollapsed = state === "collapsed";
 
   return (
-    <div
-      className={`
+    <Link href="/admin">
+      <div
+        className={`
         flex items-center gap-2
         ${
-          isCollapsed ? "px-2" : "px-4"
+          isCollapsed ? "px-0" : "px-0"
         }   /* less horizontal padding when collapsed */
         py-3
       `}
-    >
-      {/* ---- ALWAYS VISIBLE LOGO ---- */}
-      <div
-        className={`bg-primary rounded-lg flex items-center justify-center ${
-          isCollapsed ? "h-8 w-8" : "h-6 w-6"
-        }`}
       >
-        <span
-          className={`font-bold ${
-            isCollapsed ? "text-lg" : "text-sm"
-          } text-white`}
-        >
-          Z
-        </span>
-      </div>
+        <img
+          src="/favicon.png"
+          className={`${isCollapsed ? "w-8 h-8" : "w-10 h-10"}`}
+        />
 
-      {/* ---- TEXT ONLY WHEN EXPANDED ---- */}
-      {!isCollapsed && (
-        <span className="font-semibold text-lg tracking-tight">Zumbara</span>
-      )}
-    </div>
+        {/* ---- TEXT ONLY WHEN EXPANDED ---- */}
+        {!isCollapsed && (
+          <span className="font-semibold text-lg tracking-tight">Zumbara</span>
+        )}
+      </div>
+    </Link>
   );
 }
 
@@ -347,11 +340,11 @@ function NavUser() {
           </Link>
 
           <Link
-            href="/settings"
+            href="/"
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent"
           >
-            <Settings2 className="h-4 w-4" />
-            Settings
+            <Home className="h-4 w-4" />
+            Go to Home
           </Link>
 
           <div className="border-t my-1"></div>

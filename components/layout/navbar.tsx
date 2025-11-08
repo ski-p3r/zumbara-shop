@@ -139,9 +139,10 @@ export default function Navbar() {
 
           <Link
             href="/"
-            className="text-xl font-semibold tracking-tight text-primary"
+            className="text-xl font-semibold tracking-tight text-primary flex items-center justify-center gap-2"
           >
-            Zumbara
+            <img src="/favicon.png" className="w-8 h-8" />
+            <p className="hidden md:block">Zumbara</p>
           </Link>
         </div>
 
@@ -234,18 +235,18 @@ export default function Navbar() {
             ) : (
               <>
                 <Link
-                  href="/register"
+                  href="/auth/register"
                   className="hidden sm:block text-sm hover:underline"
                 >
                   Register
                 </Link>
                 <Link
-                  href="/login"
+                  href="/auth/login"
                   className="hidden sm:block text-sm hover:underline"
                 >
                   Sign In
                 </Link>
-                <Link href="/login" className="sm:hidden">
+                <Link href="/auth/login" className="sm:hidden">
                   <User className="h-5 w-5 text-muted-foreground hover:text-foreground" />
                 </Link>
               </>

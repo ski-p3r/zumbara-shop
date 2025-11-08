@@ -54,7 +54,11 @@ export const PromotionSection = () => {
   return (
     <div className="w-full relative rounded-2xl">
       {/* Slider */}
-      <div className="overflow-hidden h-56 rounded-2xl shadow-lg">
+      <div
+        className={`overflow-hidden ${
+          !isSliding && promotions.length > 0 ? "h-56" : ""
+        } rounded-2xl shadow-lg`}
+      >
         {loading ? (
           <Skeleton className="w-full h-56 rounded-2xl " />
         ) : (
