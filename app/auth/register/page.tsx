@@ -9,6 +9,7 @@ import { OtpInput } from "@/components/otp-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { getUserProfile } from "@/utils/api/user";
 
 type RegisterStep = "phone" | "otp" | "details";
 
@@ -57,30 +58,9 @@ export default function RegisterPage() {
     try {
       const cleanPhone = phone.replace(/\D/g, "");
       await RequestOtp({ phone: `+251${cleanPhone}` });
-      setStep("otp");
-    } catch (err: any) {
-      setError(err.message || "Failed to request OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (otp.length !== 6) {
-      setError("OTP must be 6 digits");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const cleanPhone = phone.replace(/\D/g, "");
-      await VerifyOtp({ phone: `+251${cleanPhone}`, code: otp });
       setStep("details");
     } catch (err: any) {
-      setError(err.message || "Failed to verify OTP");
+      setError(err.message || "Failed to request OTP");
     } finally {
       setLoading(false);
     }
@@ -109,6 +89,7 @@ export default function RegisterPage() {
         phone: `+251${cleanPhone}`,
         password,
       });
+      await getUserProfile();
       router.push("/");
     } catch (err: any) {
       setError(err.message || "Registration failed");
@@ -133,14 +114,9 @@ export default function RegisterPage() {
             {
               num: 1,
               label: "Phone",
-              active: step === "phone" || step === "otp" || step === "details",
+              active: step === "phone" || step === "details",
             },
-            {
-              num: 2,
-              label: "Verify",
-              active: step === "otp" || step === "details",
-            },
-            { num: 3, label: "Details", active: step === "details" },
+            { num: 2, label: "Details", active: step === "details" },
           ].map((s) => (
             <div key={s.num} className="flex flex-col items-center flex-1">
               <div
@@ -200,45 +176,6 @@ export default function RegisterPage() {
               className="w-full h-12 text-base font-semibold rounded-lg"
             >
               {loading ? "Sending OTP..." : "Send OTP"}
-            </Button>
-          </form>
-        )}
-
-        {/* Step 2: OTP */}
-        {step === "otp" && (
-          <form onSubmit={handleVerifyOtp} className="space-y-8">
-            <div className="text-center">
-              <p className="text-muted-foreground mb-1">
-                Verification code sent to
-              </p>
-              <p className="text-foreground font-semibold">
-                {formatPhoneDisplay(phone)}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setStep("phone");
-                  setOtp("");
-                }}
-                className="text-primary text-sm font-semibold mt-3 hover:opacity-80 transition"
-              >
-                Change number
-              </button>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-4 text-center">
-                Enter 6-Digit Code
-              </label>
-              <OtpInput value={otp} onChange={setOtp} disabled={loading} />
-            </div>
-
-            <Button
-              type="submit"
-              disabled={loading || otp.length !== 6}
-              className="w-full h-12 text-base font-semibold rounded-lg"
-            >
-              {loading ? "Verifying..." : "Verify Code"}
             </Button>
           </form>
         )}

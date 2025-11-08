@@ -164,6 +164,7 @@ export const navItems = [
 ];
 
 import { ChevronDown } from "lucide-react";
+import { clearAllCookies } from "@/utils/store";
 
 function NavMain() {
   return (
@@ -244,8 +245,10 @@ function NavUser() {
   const userAvatar = useUserAvatar();
   const clearUser = useClearUser();
 
-  const handleLogout = () => {
-    clearUser();
+  const handleLogout = async () => {
+    await clearUser();
+    await useClearUser()();
+    await clearAllCookies();
     window.location.href = "/";
   };
 

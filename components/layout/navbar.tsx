@@ -37,6 +37,7 @@ import {
   useIsAuthenticated,
 } from "@/stores/user-store";
 import { useTheme } from "next-themes";
+import { clearAllCookies } from "@/utils/store";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -53,8 +54,10 @@ export default function Navbar() {
     { name: "Contact", href: "/contact" },
   ];
 
-  const handleLogout = () => {
-    clearUser();
+  const handleLogout = async () => {
+    await clearUser();
+    await useClearUser()();
+    await clearAllCookies();
     window.location.href = "/";
   };
 
@@ -212,9 +215,6 @@ export default function Navbar() {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/orders">Orders</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/wishlist">Wishlist</Link>
                   </DropdownMenuItem>
                   {user.role === "ADMIN" && (
                     <DropdownMenuItem asChild>

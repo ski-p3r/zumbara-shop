@@ -8,6 +8,7 @@ import { Login } from "@/utils/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { getUserProfile } from "@/utils/api/user";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,6 +40,8 @@ export default function LoginPage() {
     try {
       const cleanPhone = phone.replace(/\D/g, "");
       await Login({ phone: `+251${cleanPhone}`, password });
+      await getUserProfile();
+
       router.push("/");
     } catch (err: any) {
       setError(err.message || "Login failed");
