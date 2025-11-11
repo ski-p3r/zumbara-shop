@@ -10,13 +10,23 @@ export const getPaymentMethods = async () => {
       methods: [
         {
           bankName: "CBE",
-          accountName: "My Store",
-          accountNumber: "100012345678",
+          accountName: "Abel G/Senbet",
+          accountNumber: "1000504447581",
+        },
+        {
+          bankName: "Abay",
+          accountName: "Abel G/Senbet",
+          accountNumber: "41289279",
+        },
+        {
+          bankName: "Awash",
+          accountName: "Abel G/Senbet",
+          accountNumber: "013201216506200",
         },
         {
           bankName: "TeleBirr",
-          accountName: "My Store",
-          accountNumber: "0912345678",
+          accountName: "Abel G/Senbet",
+          accountNumber: "0905561888",
         },
       ],
     };
