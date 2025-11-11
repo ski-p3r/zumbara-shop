@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -58,7 +57,7 @@ import { useRouter } from "next/navigation";
 // Schema validation
 const categoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  path: z.string().min(1, "Path is required"),
+  path: z.string().min(1, "Path is required").optional(),
   image: z.string().min(1, "Image URL is required"),
 });
 
@@ -243,7 +242,11 @@ export default function CategoriesPage() {
     setIsSubmitting(true);
     try {
       if (isEditing && selectedCategory) {
-        await updateCategory(selectedCategory.id, data);
+        await updateCategory(selectedCategory.id, {
+          name: data.name,
+          image: data.image,
+          path: data.path || selectedCategory.path,
+        });
       } else {
         await createCategory(data);
       }

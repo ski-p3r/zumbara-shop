@@ -20,7 +20,7 @@ export const getCategories = async (parent?: string) => {
 
 export const createCategory = async (categoryData: {
   name: string;
-  path: string;
+  path?: string;
   image: string;
 }) => {
   try {
