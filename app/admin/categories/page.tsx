@@ -57,7 +57,7 @@ import { useRouter } from "next/navigation";
 // Schema validation
 const categoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  path: z.string().min(1, "Path is required").optional(),
+  path: z.string().optional(),
   image: z.string().min(1, "Image URL is required"),
 });
 
