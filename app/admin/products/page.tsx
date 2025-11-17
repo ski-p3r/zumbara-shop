@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getProducts } from "@/utils/api/products";
+import { useRouter } from "next/navigation";
+import { getProducts, deleteProduct } from "@/utils/api/products";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,6 +36,17 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
 
 interface Variant {
   id: string;
@@ -63,26 +75,28 @@ interface Product {
 
 interface Filters {
   search: string;
-  categorySlug: string; // "all" | "fiction" | etc.
+  categorySlug: string;
   minPrice: string;
   maxPrice: string;
-  minRating: string; // "any" | "1" | "2"...
-  maxRating: string; // "any" | "1" | "2"...
+  minRating: string;
+  maxRating: string;
 }
 
 export default function Products() {
+  const router = useRouter();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // Pagination state
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const pageSize = 20;
 
-  // Filters state
+  // Filters
   const [filters, setFilters] = useState<Filters>({
     search: "",
     categorySlug: "",
@@ -92,10 +106,15 @@ export default function Products() {
     maxRating: "5",
   });
 
-  // Sorting state
+  // Sorting
   const [sort, setSort] = useState<
     "NEWEST" | "OLDEST" | "PRICE_ASC" | "PRICE_DESC"
   >("NEWEST");
+
+  // --- Delete Dialog State ---
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -117,7 +136,7 @@ export default function Products() {
         sort,
         page: currentPage,
         pageSize,
-        variant: true,
+        variant: "first",
       });
 
       setProducts(response.data || []);
@@ -134,7 +153,6 @@ export default function Products() {
     fetchProducts();
   }, [currentPage, sort]);
 
-  // Re-fetch when filters change and user applies
   useEffect(() => {
     if (currentPage === 1) {
       fetchProducts();
@@ -171,14 +189,30 @@ export default function Products() {
   };
 
   const handleEdit = (product: Product) => {
-    console.log("Edit product:", product);
-    // Implement edit functionality
+    router.push(`/admin/products/${product.id}/edit`);
   };
 
-  const handleDelete = (product: Product) => {
-    if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
-      console.log("Delete product:", product);
-      // Implement delete functionality
+  // --- Delete Flow ---
+  const openDeleteDialog = (product: Product) => {
+    setProductToDelete(product);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
+
+    try {
+      setDeleting(true);
+      await deleteProduct(productToDelete.id);
+      // Remove from UI immediately
+      setProducts((prev) => prev.filter((p) => p.id !== productToDelete.id));
+      setTotalProducts((prev) => prev - 1);
+    } catch (error) {
+      console.error("Delete failed:", error);
+    } finally {
+      setDeleting(false);
+      setDeleteDialogOpen(false);
+      setProductToDelete(null);
     }
   };
 
@@ -191,7 +225,6 @@ export default function Products() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    // Force consistent formatting
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -199,13 +232,10 @@ export default function Products() {
     });
   };
 
-  // Half-star rating component
-
   const StarRating = ({ rating }: { rating: number }) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    const gradientId = `half-star-gradient`; // Stable!
 
     return (
       <div className="flex items-center space-x-1">
@@ -219,12 +249,8 @@ export default function Products() {
           </svg>
         ))}
 
-        {/* Half star */}
         {hasHalfStar && (
-          <svg
-            className="w-4 h-4 text-yellow-400 fill-current"
-            viewBox="0 0 20 20"
-          >
+          <svg className="w-4 h-4 text-yellow-400" viewBox="0 0 20 20">
             <defs>
               <linearGradient id={`half-star-${rating}`}>
                 <stop offset="50%" stopColor="currentColor" />
@@ -238,7 +264,6 @@ export default function Products() {
           </svg>
         )}
 
-        {/* Empty stars */}
         {[...Array(emptyStars)].map((_, i) => (
           <svg
             key={`empty-${i}`}
@@ -547,7 +572,7 @@ export default function Products() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleDelete(product)}
+                        onClick={() => openDeleteDialog(product)}
                       >
                         <svg
                           className="w-4 h-4"
@@ -724,6 +749,37 @@ export default function Products() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Alert Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Product?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              product <strong>"{productToDelete?.name}"</strong> and all its
+              variants.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleting}
+            >
+              {deleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
