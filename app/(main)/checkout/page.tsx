@@ -3,6 +3,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { useIsAuthenticated } from "@/stores/user-store";
 
 import { getCart } from "@/utils/api/cart";
 import { getProductById } from "@/utils/api/products";
@@ -23,6 +24,12 @@ function CheckoutContent() {
   const cartId = searchParams.get("cartId");
   const productId = searchParams.get("productId");
   const variantId = searchParams.get("variantId");
+  const quantityParam = searchParams.get("quantity");
+  const quantityFromQuery = quantityParam
+    ? parseInt(quantityParam, 10)
+    : undefined;
+
+  const isAuthenticated = useIsAuthenticated();
 
   const [loading, setLoading] = useState(true);
   const [checkoutItem, setCheckoutItem] = useState<any>(null);
@@ -30,6 +37,17 @@ function CheckoutContent() {
 
   const placeOrder = async () => {
     try {
+      // Redirect to login if user is not authenticated
+      if (!isAuthenticated) {
+        // preserve current checkout query so user can continue
+        const query = new URLSearchParams();
+        if (cartId) query.set("cartId", cartId);
+        if (productId) query.set("productId", productId);
+        if (variantId) query.set("variantId", variantId);
+        router.push(`/auth/login?redirect=/checkout?${query.toString()}`);
+        return;
+      }
+
       setPlacingOrder(true);
       if (cartId) {
         const result = await createOrder({ cartId });
@@ -72,12 +90,18 @@ function CheckoutContent() {
             : null;
           const price = variant ? variant.price : product.price;
 
+          const qty =
+            quantityFromQuery &&
+            Number.isFinite(quantityFromQuery) &&
+            quantityFromQuery > 0
+              ? quantityFromQuery
+              : 1;
           setCheckoutItem({
             type: "single",
             product,
             variant,
-            quantity: 1,
-            total: price,
+            quantity: qty,
+            total: price * qty,
           });
         }
       } catch (e) {
@@ -144,9 +168,19 @@ function CheckoutContent() {
                 {checkoutItem.variant.name}
               </p>
             )}
-            <p className="font-semibold mt-1">
-              {formatETB(checkoutItem.total)}
-            </p>
+            <div className="mt-2">
+              <p className="text-sm text-muted-foreground">
+                {formatETB(
+                  checkoutItem.variant
+                    ? checkoutItem.variant.price
+                    : checkoutItem.product.price
+                )}{" "}
+                × {checkoutItem.quantity}
+              </p>
+              <p className="font-semibold mt-1">
+                {formatETB(checkoutItem.total)}
+              </p>
+            </div>
           </div>
         </div>
       )}

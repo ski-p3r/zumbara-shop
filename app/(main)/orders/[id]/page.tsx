@@ -15,6 +15,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { getSingleOrder, uploadPaymentProofToBackend } from "@/utils/api/order";
+import { getPaymentMethods } from "@/utils/api/payments";
 import { formatETB } from "@/utils/formatter";
 import { Input } from "@/components/ui/input";
 import { uploadFile } from "@/utils/api/upload";
@@ -49,6 +50,8 @@ export default function OrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<any[] | null>(null);
+  const [methodsLoading, setMethodsLoading] = useState(false);
 
   const loadOrder = async () => {
     setLoading(true);
@@ -60,6 +63,27 @@ export default function OrderDetailPage() {
   useEffect(() => {
     loadOrder();
   }, [id]);
+
+  useEffect(() => {
+    const loadMethods = async () => {
+      if (!order) return;
+      if (order.paymentStatus !== "PENDING") return;
+      setMethodsLoading(true);
+      try {
+        const res = await getPaymentMethods();
+        // Normalize response which might be { methods: [...] } or array
+        const methods = Array.isArray(res) ? res : res?.methods ?? [];
+        setPaymentMethods(methods);
+      } catch (err) {
+        console.error("Failed to load payment methods", err);
+        setPaymentMethods([]);
+      } finally {
+        setMethodsLoading(false);
+      }
+    };
+
+    loadMethods();
+  }, [order]);
 
   const handleUploadProof = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!order) return;
@@ -171,6 +195,29 @@ export default function OrderDetailPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* PAYMENT METHODS (show when order not paid) */}
+      {order.paymentStatus === "PENDING" && (
+        <div>
+          <p className="text-sm mb-2 font-medium">Payment Methods</p>
+          {methodsLoading && <p className="text-sm text-gray-600">Loading methods...</p>}
+          {!methodsLoading && paymentMethods && paymentMethods.length === 0 && (
+            <p className="text-sm text-gray-600">No payment methods available.</p>
+          )}
+
+          {!methodsLoading && paymentMethods && paymentMethods.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {paymentMethods.map((m: any, idx: number) => (
+                <div key={idx} className="p-3 border rounded-md">
+                  <p className="font-medium text-sm">{m.bankName}</p>
+                  <p className="text-xs text-gray-600">{m.accountName}</p>
+                  <p className="text-sm font-semibold">{m.accountNumber}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

@@ -9,6 +9,7 @@ import { WriteReview } from "@/components/core/write-review";
 import { formatETB } from "@/utils/formatter";
 import { addToCart } from "@/utils/api/cart";
 import { toast } from "sonner";
+import { useIsAuthenticated } from "@/stores/user-store";
 
 interface Variant {
   id: string;
@@ -48,6 +49,8 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState<number>(1);
+  const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -72,11 +75,15 @@ export default function ProductDetail() {
 
   const handleAddToCart = async () => {
     try {
+      if (!isAuthenticated) {
+        router.push(`/auth/login?redirect=/shop/${id}`);
+        return;
+      }
       const variantId = selectedVariant ? selectedVariant.id : undefined;
       await addToCart({
         productId: product?.id || "",
         variantId,
-        quantity: 1,
+        quantity,
       });
       toast.success("Product added to cart");
     } catch (err) {
@@ -85,9 +92,24 @@ export default function ProductDetail() {
   };
 
   const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      const query = new URLSearchParams({
+        productId: product?.id || "",
+        ...(selectedVariant && { variantId: selectedVariant.id }),
+        quantity: String(quantity ?? 1),
+      });
+      router.push(
+        `/auth/login?redirect=${encodeURIComponent(
+          `/checkout?${query.toString()}`
+        )}`
+      );
+      return;
+    }
+
     const queryParams = new URLSearchParams({
       productId: product?.id || "",
       ...(selectedVariant && { variantId: selectedVariant.id }),
+      quantity: String(quantity ?? 1),
     });
     router.push(`/checkout?${queryParams.toString()}`);
   };
@@ -281,6 +303,33 @@ export default function ProductDetail() {
             )}
 
             <div className="flex flex-col gap-4 pt-8">
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium">Quantity</label>
+                <div className="flex items-center border rounded-md overflow-hidden">
+                  <button
+                    className="px-3 py-2 bg-muted text-foreground"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    className="w-16 text-center px-2 py-2 bg-transparent outline-none"
+                    value={quantity}
+                    min={1}
+                    onChange={(e) => {
+                      const v = Number(e.target.value || 1);
+                      setQuantity(Number.isNaN(v) ? 1 : Math.max(1, v));
+                    }}
+                  />
+                  <button
+                    className="px-3 py-2 bg-muted text-foreground"
+                    onClick={() => setQuantity((q) => q + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
               <Button
                 variant="outline"
                 className="w-full h-12 text-base font-medium gap-2 border-border hover:border-primary transition-colors bg-transparent"

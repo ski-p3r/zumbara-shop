@@ -37,6 +37,7 @@ import {
   useIsAuthenticated,
 } from "@/stores/user-store";
 import { useTheme } from "next-themes";
+import { clearClientCookies } from "@/utils/store/client";
 import { clearAllCookies } from "@/utils/store";
 
 export default function Navbar() {
@@ -55,9 +56,17 @@ export default function Navbar() {
   ];
 
   const handleLogout = async () => {
-    await clearUser();
-    await useClearUser()();
+    // Clear zustand user store
     await clearAllCookies();
+
+    // Clear client cookies (httpOnly cookies can't be removed client-side)
+    try {
+      clearClientCookies();
+    } catch (e) {
+      console.warn("Failed to clear client cookies", e);
+    }
+
+    // Redirect to home
     window.location.href = "/";
   };
 
