@@ -169,14 +169,46 @@ function CheckoutContent() {
               </p>
             )}
             <div className="mt-2">
-              <p className="text-sm text-muted-foreground">
-                {formatETB(
-                  checkoutItem.variant
-                    ? checkoutItem.variant.price
-                    : checkoutItem.product.price
-                )}{" "}
-                × {checkoutItem.quantity}
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-sm text-muted-foreground">
+                  {formatETB(
+                    checkoutItem.variant
+                      ? checkoutItem.variant.price
+                      : checkoutItem.product.price
+                  )}
+                </p>
+                <div className="flex items-center border rounded px-2">
+                  <button
+                    className="px-2"
+                    onClick={() =>
+                      setCheckoutItem((prev: any) => {
+                        const qty = Math.max(1, prev.quantity - 1);
+                        const price = prev.variant
+                          ? prev.variant.price
+                          : prev.product.price;
+                        return { ...prev, quantity: qty, total: price * qty };
+                      })
+                    }
+                  >
+                    -
+                  </button>
+                  <span className="px-3">{checkoutItem.quantity}</span>
+                  <button
+                    className="px-2"
+                    onClick={() =>
+                      setCheckoutItem((prev: any) => {
+                        const qty = prev.quantity + 1;
+                        const price = prev.variant
+                          ? prev.variant.price
+                          : prev.product.price;
+                        return { ...prev, quantity: qty, total: price * qty };
+                      })
+                    }
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
               <p className="font-semibold mt-1">
                 {formatETB(checkoutItem.total)}
               </p>
@@ -190,8 +222,14 @@ function CheckoutContent() {
         <span className="text-primary">{formatETB(checkoutItem.total)}</span>
       </div>
 
+      <div className="mt-4 text-sm text-muted-foreground">
+        Please send a text message to{" "}
+        <span className="font-medium">+251905561888</span> before placing your
+        order.
+      </div>
+
       <Button
-        className="w-full mt-6"
+        className="w-full mt-4"
         size="lg"
         disabled={placingOrder}
         onClick={placeOrder}

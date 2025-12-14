@@ -25,6 +25,9 @@ export default function HomePage() {
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<
     string | undefined
   >(undefined);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const PAGE_SIZE = 8;
 
@@ -39,31 +42,42 @@ export default function HomePage() {
   }, []);
 
   /** Fetch products (optionally filtered by category) */
-  const fetchProducts = useCallback(async (categorySlug?: string) => {
-    try {
-      setLoading(true);
-      const res = await getProducts({
-        sort: "NEWEST",
-        page: 1,
-        pageSize: PAGE_SIZE,
-        variant: true,
-        categorySlug,
-      });
+  const fetchProducts = useCallback(
+    async (categorySlug?: string, pageParam = 1) => {
+      try {
+        if (pageParam === 1) setLoading(true);
+        else setLoadingMore(true);
 
-      const items = Array.isArray(res) ? res : res?.data || [];
-      setProducts(items);
-      setSelectedCategorySlug(categorySlug);
-    } catch (err) {
-      console.error("❌ Failed to load products:", err);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        const res = await getProducts({
+          sort: "NEWEST",
+          page: pageParam,
+          pageSize: PAGE_SIZE,
+          variant: true,
+          categorySlug,
+        });
+
+        const items = Array.isArray(res) ? res : res?.data || [];
+
+        if (pageParam === 1) setProducts(items);
+        else setProducts((prev) => [...prev, ...items]);
+
+        setHasMore(items.length === PAGE_SIZE);
+        setPage(pageParam);
+        setSelectedCategorySlug(categorySlug);
+      } catch (err) {
+        console.error("❌ Failed to load products:", err);
+        if (pageParam === 1) setProducts([]);
+      } finally {
+        if (pageParam === 1) setLoading(false);
+        else setLoadingMore(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     fetchCategories();
-    fetchProducts();
+    fetchProducts(undefined, 1);
   }, [fetchCategories, fetchProducts]);
 
   return (
@@ -165,6 +179,25 @@ export default function HomePage() {
                 discountPrice={product.discountPrice} // if available
               />
             ))}
+          </div>
+        )}
+        {/* Load more button */}
+        {!loading && products.length > 0 && (
+          <div className="mt-8 flex justify-center">
+            {hasMore ? (
+              <Button
+                onClick={() => fetchProducts(selectedCategorySlug, page + 1)}
+                disabled={loadingMore}
+              >
+                {loadingMore ? "Loading..." : "Load More"}
+              </Button>
+            ) : (
+              products.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  No more products
+                </p>
+              )
+            )}
           </div>
         )}
       </section>
